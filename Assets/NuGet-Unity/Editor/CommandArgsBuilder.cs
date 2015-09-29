@@ -1,7 +1,6 @@
 ﻿namespace Alquimiaware.NuGetUnity
 {
     using System;
-    using UnityEngine;
 
     public class CommandArgsBuilder
     {
@@ -13,6 +12,11 @@
             if (sources.IsEmpty) throw new ArgumentOutOfRangeException("sources", "It must define at least one valid source");
 
             this.sources = sources;
+        }
+
+        public string ListArgs()
+        {
+            return "list";
         }
     }
 }
