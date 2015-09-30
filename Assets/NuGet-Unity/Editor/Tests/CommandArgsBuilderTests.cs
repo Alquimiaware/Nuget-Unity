@@ -27,10 +27,53 @@
             Assert.IsTrue(args.Split(' ')[0] == "list");
         }
 
-        private CommandArgsBuilder CreateArgsBuilder()
+        [Test]
+        public void ListArgs_ByDefinition_IncludesSources()
+        {
+            var argsBuilder = CreateArgsBuilder(@"Z:/MyRepo/");
+            string args = argsBuilder.ListArgs();
+            // Expected output must contain some, including ""
+            // -Source "source1path;source2Path"
+            // Questions:
+            // - Does the order matter? In which way?
+            // - What if nuget can't resolve a path
+            // - What if can't reach the remote path
+            AssertContainsOption(args, "Source", "\"Z:/MyRepo/\"");
+        }
+
+        private void AssertContainsOption(
+            string args,
+            string expectedOption,
+            string expectedValue = null)
+        {
+            var option = string.Concat("-", expectedOption);
+            var chunks = args.Split(
+                " ".ToCharArray(),
+                StringSplitOptions.RemoveEmptyEntries);
+
+            var optionIdx = Array.IndexOf(chunks, option);
+            if (optionIdx == -1)
+                Assert.Fail(
+                    "Expected Option: {0}\nWas not found in: {1}",
+                    option, args);
+
+            if (expectedValue != null)
+            {
+                int valueIdx = optionIdx + 1;
+                bool isOutOfRange = valueIdx >= chunks.Length;
+                if (isOutOfRange || chunks[valueIdx] != expectedValue)
+                    Assert.Fail(
+                        "Expected Value For Option <{0}> : {1}\nActual:  {2}",
+                        expectedOption,
+                        expectedValue,
+                        isOutOfRange ? "<Has no value>" : chunks[valueIdx]);
+            }
+        }
+
+        private CommandArgsBuilder CreateArgsBuilder(string localPackage = @"C:/Packages/")
         {
             var sources = CreateEmptySources();
-            sources.local = new List<string>() { @"C:/Packages/" };
+            sources.local = new List<string>() { localPackage };
 
             return new CommandArgsBuilder(sources);
         }

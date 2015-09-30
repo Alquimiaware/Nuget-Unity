@@ -16,7 +16,7 @@
 
         public string ListArgs()
         {
-            return "list";
+            return "list -Source \"Z:/MyRepo/\"";
         }
     }
 }
