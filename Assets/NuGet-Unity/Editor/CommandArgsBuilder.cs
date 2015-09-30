@@ -16,7 +16,15 @@
 
         public string ListArgs()
         {
-            return "list -Source \"Z:/MyRepo/\"";
+            return string.Join(
+                " ",
+                new string[]
+                {
+                    "list",
+                    string.Format(
+                        "-Source \"{0}\"",
+                        string.Join(";", this.sources.GetAsArray()))
+                });
         }
     }
 }

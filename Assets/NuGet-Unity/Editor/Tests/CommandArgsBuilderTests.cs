@@ -28,17 +28,37 @@
         }
 
         [Test]
-        public void ListArgs_ByDefinition_IncludesSources()
+        public void ListArgs_HadOneSource_IncludesSource()
         {
-            var argsBuilder = CreateArgsBuilder(@"Z:/MyRepo/");
-            string args = argsBuilder.ListArgs();
+            var localRepo = @"Z:/MyRepo/";
+            var argsBuilder = CreateArgsBuilder(localRepo);
+
+            string listArgs = argsBuilder.ListArgs();
             // Expected output must contain some, including ""
             // -Source "source1path;source2Path"
             // Questions:
             // - Does the order matter? In which way?
             // - What if nuget can't resolve a path
             // - What if can't reach the remote path
-            AssertContainsOption(args, "Source", "\"Z:/MyRepo/\"");
+            AssertContainsOption(
+                listArgs,
+                "Source",
+                string.Format("\"{0}\"", localRepo));
+        }
+
+        [Test]
+        public void ListArgs_HadSeveralSources_IncludesAllSources()
+        {
+            var localRepo = @"W:/CoolRepo/";
+            var remoteRepo = @"http:\\mynuget.org\repo";
+            var sut = CreateArgsBuilder(localRepo, remoteRepo);
+
+            string listArgs = sut.ListArgs();
+
+            AssertContainsOption(
+                listArgs,
+                "Source",
+                string.Format("\"{0};{1}\"", localRepo, remoteRepo));
         }
 
         private void AssertContainsOption(
@@ -70,11 +90,13 @@
             }
         }
 
-        private CommandArgsBuilder CreateArgsBuilder(string localPackage = @"C:/Packages/")
+        private CommandArgsBuilder CreateArgsBuilder(
+            string localPackage = @"C:/Packages/",
+            string remotePackage = null)
         {
             var sources = CreateEmptySources();
-            sources.local = new List<string>() { localPackage };
-
+            sources.AddLocal(localPackage);
+            sources.AddRemote(remotePackage);
             return new CommandArgsBuilder(sources);
         }
 
