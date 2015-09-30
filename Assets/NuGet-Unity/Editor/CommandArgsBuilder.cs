@@ -2,9 +2,13 @@
 {
     using System;
 
-    public class CommandArgsBuilder
+    // TODO: Specific builder for each command so it only supports valid options
+
+    public abstract class CommandArgsBuilder
     {
         private Sources sources;
+
+        protected abstract string CommandName { get; }
 
         public CommandArgsBuilder(Sources sources)
         {
@@ -14,17 +18,27 @@
             this.sources = sources;
         }
 
-        public string ListArgs()
+        public override string ToString()
         {
             return string.Join(
                 " ",
                 new string[]
                 {
-                    "list",
-                    string.Format(
-                        "-Source \"{0}\"",
-                        string.Join(";", this.sources.GetAsArray()))
+                    this.CommandName,
+                    this.GetDirectParams(),
+                    this.GetSourceOption(),
+                    this.GetMoreOptions(),
                 });
         }
+
+        private string GetSourceOption()
+        {
+            return string.Format(
+                "-Source \"{0}\"",
+                string.Join(";", this.sources.GetAsArray()));
+        }
+
+        protected abstract string GetMoreOptions();
+        protected abstract string GetDirectParams();
     }
 }

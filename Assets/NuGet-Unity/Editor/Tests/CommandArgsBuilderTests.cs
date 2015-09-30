@@ -8,32 +8,52 @@
     [TestFixture]
     public class CommandArgsBuilderTests
     {
+        private const string AnyCommandName = "Any";
+        private const string AnyMoreOptions = "<MoreOptions>";
+        private const string AnyDirectParams = "<DirectParameters>";
+
         [Test]
         public void Ctor_ByDefinition_RequiresSomeSource()
         {
             var nullSources = default(Sources);
             var emptySources = CreateEmptySources();
             Assert.Throws<ArgumentNullException>(
-                () => new CommandArgsBuilder(nullSources));
+                () => new AnyCommand(nullSources));
             Assert.Throws<ArgumentOutOfRangeException>(
-                () => new CommandArgsBuilder(emptySources));
+                () => new AnyCommand(emptySources));
         }
 
         [Test]
-        public void ListArgs_ByDefinition_StartsWithListCommand()
+        public void ToString_ByDefinition_StartsWithCommandName()
         {
-            var argsBuilder = CreateArgsBuilder();
-            string args = argsBuilder.ListArgs();
-            Assert.IsTrue(args.Split(' ')[0] == "list");
+            var argsBuilder = CreateAnyCommandBuilder();
+            string args = argsBuilder.ToString();
+            Assert.AreEqual(AnyCommandName, args.Split(' ')[0]);
         }
 
         [Test]
-        public void ListArgs_HadOneSource_IncludesSource()
+        public void ToString_ByDefinition_DirectParamsFollowCommandName()
+        {
+            var sut = CreateAnyCommandBuilder();
+            string args = sut.ToString();
+            Assert.AreEqual(AnyDirectParams, args.Split(' ')[1]);
+        }
+
+        [Test]
+        public void ToString_ByDefinition_ContainsExtraOptions()
+        {
+            var sut = CreateAnyCommandBuilder();
+            string args = sut.ToString();
+            AssertContains(AnyMoreOptions, args);
+        }
+
+        [Test]
+        public void ToString_HadOneSource_IncludesSource()
         {
             var localRepo = @"Z:/MyRepo/";
-            var argsBuilder = CreateArgsBuilder(localRepo);
+            var anyCommand = CreateAnyCommandBuilder(localRepo);
 
-            string listArgs = argsBuilder.ListArgs();
+            string anyCommandArgs = anyCommand.ToString();
             // Expected output must contain some, including ""
             // -Source "source1path;source2Path"
             // Questions:
@@ -41,24 +61,32 @@
             // - What if nuget can't resolve a path
             // - What if can't reach the remote path
             AssertContainsOption(
-                listArgs,
+                anyCommandArgs,
                 "Source",
                 string.Format("\"{0}\"", localRepo));
         }
 
         [Test]
-        public void ListArgs_HadSeveralSources_IncludesAllSources()
+        public void ToString_HadSeveralSources_IncludesAllSources()
         {
             var localRepo = @"W:/CoolRepo/";
             var remoteRepo = @"http:\\mynuget.org\repo";
-            var sut = CreateArgsBuilder(localRepo, remoteRepo);
+            var sut = CreateAnyCommandBuilder(localRepo, remoteRepo);
 
-            string listArgs = sut.ListArgs();
+            string anyCommandArgs = sut.ToString();
 
             AssertContainsOption(
-                listArgs,
+                anyCommandArgs,
                 "Source",
                 string.Format("\"{0};{1}\"", localRepo, remoteRepo));
+        }
+
+        private void AssertContains(string expectedSubstring, string text)
+        {
+            if (!text.Contains(expectedSubstring))
+                Assert.Fail(
+                    "Expected Substring: {0}\nNot found in: {1}",
+                    expectedSubstring, text);
         }
 
         private void AssertContainsOption(
@@ -90,20 +118,45 @@
             }
         }
 
-        private CommandArgsBuilder CreateArgsBuilder(
+        private CommandArgsBuilder CreateAnyCommandBuilder(
             string localPackage = @"C:/Packages/",
             string remotePackage = null)
         {
             var sources = CreateEmptySources();
             sources.AddLocal(localPackage);
             sources.AddRemote(remotePackage);
-            return new CommandArgsBuilder(sources);
+            return new AnyCommand(sources);
         }
 
         private Sources CreateEmptySources()
         {
             var sources = ScriptableObject.CreateInstance<Sources>();
             return sources;
+        }
+
+        private class AnyCommand : CommandArgsBuilder
+        {
+            protected override string CommandName
+            {
+                get
+                {
+                    return AnyCommandName;
+                }
+            }
+
+            public AnyCommand(Sources sources)
+                : base(sources)
+            { }
+
+            protected override string GetMoreOptions()
+            {
+                return AnyMoreOptions;
+            }
+
+            protected override string GetDirectParams()
+            {
+                return AnyDirectParams;
+            }
         }
     }
 }
