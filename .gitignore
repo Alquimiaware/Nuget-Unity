@@ -3,3 +3,4 @@ Temp/
 NuGet-Unity.CSharp.Editor.csproj
 NuGet-Unity.CSharp.csproj
 NuGet-Unity.sln
+!Assets/NuGet-Unity/Editor/NuGet-CommandLine/nuget.exe
