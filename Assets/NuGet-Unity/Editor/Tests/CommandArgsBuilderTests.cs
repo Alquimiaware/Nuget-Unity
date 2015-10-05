@@ -83,12 +83,24 @@
             }
         }
 
-        protected void AssertContains(string expectedSubstring, string text)
+        protected void AssertContains(
+            string expectedSubstring,
+            string text)
         {
             if (!text.Contains(expectedSubstring))
                 Assert.Fail(
                     "Expected Substring: {0}\nNot found in: {1}",
                     expectedSubstring, text);
+        }
+
+        protected void AssertDoesntContain(
+            string unexpectedSubstring,
+            string text)
+        {
+            if (text.Contains(unexpectedSubstring))
+                Assert.Fail(
+                    "Unexpected Substring: {0}\n Was found in: {1}",
+                    unexpectedSubstring, text);
         }
 
         protected void AssertContainsOption(

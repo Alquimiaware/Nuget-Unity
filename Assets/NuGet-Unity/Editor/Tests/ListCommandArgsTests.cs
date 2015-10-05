@@ -37,12 +37,30 @@
         }
 
         [Test]
+        public void ToString_NotAllVersions_OptionNotPresent()
+        {
+            ListCommandArgs sut = DefaultListCommandArgs();
+            sut.ShowAllVersions = false;
+            var args = sut.ToString();
+            AssertDoesntContain("-AllVersions", args);
+        }
+
+        [Test]
         public void ToString_ShowPrerelease_AddsTheOption()
         {
             var sut = DefaultListCommandArgs();
             sut.ShowPrerelase = true;
             var args = sut.ToString();
             AssertContainsOption(args, "Prerelease");
+        }
+
+        [Test]
+        public void ToString_NoPrerelease_OptionNotPresent()
+        {
+            var sut = DefaultListCommandArgs();
+            sut.ShowPrerelase = false;
+            var args = sut.ToString();
+            AssertDoesntContain("-Prerelease", args);
         }
 
         private ListCommandArgs DefaultListCommandArgs()
