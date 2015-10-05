@@ -148,6 +148,13 @@
             return sources;
         }
 
+        protected Sources DefaultSources()
+        {
+            var sources = ScriptableObject.CreateInstance<Sources>();
+            sources.AddLocal("R:/MyLocalRepo/");
+            return sources;
+        }
+
         private class AnyCommand : CommandArgsBuilder
         {
             protected override string CommandName

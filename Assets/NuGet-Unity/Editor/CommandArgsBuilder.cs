@@ -2,8 +2,6 @@
 {
     using System;
 
-    // TODO: Specific builder for each command so it only supports valid options
-
     public abstract class CommandArgsBuilder
     {
         private Sources sources;
