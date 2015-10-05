@@ -29,9 +29,12 @@
 
         protected override string GetMoreOptions()
         {
-            return string.Concat(
-                this.ShowAllVersions ? "-AllVersions" : string.Empty,
-                this.ShowPrerelase ? "-Prerelease" : string.Empty);
+            return string.Join(" ",
+                new string[]
+                {
+                    this.ShowAllVersions ? "-AllVersions" : string.Empty,
+                    this.ShowPrerelase ? "-Prerelease" : string.Empty
+                });
         }
     }
 }

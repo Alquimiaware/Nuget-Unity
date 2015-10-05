@@ -63,6 +63,17 @@
             AssertDoesntContain("-Prerelease", args);
         }
 
+        [Test]
+        public void ToString_MultipleOptions_SpaceSeparated()
+        {
+            var sut = DefaultListCommandArgs();
+            sut.ShowPrerelase = true;
+            sut.ShowAllVersions = true;
+            var args = sut.ToString();
+            AssertContainsOption(args, "Prerelease");
+            AssertContainsOption(args, "AllVersions");
+        }
+
         private ListCommandArgs DefaultListCommandArgs()
         {
             return new ListCommandArgs(DefaultSources());
