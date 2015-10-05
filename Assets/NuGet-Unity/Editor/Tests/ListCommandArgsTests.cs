@@ -4,13 +4,12 @@
     using NUnit.Framework;
 
     [TestFixture]
-    public class ListCommandArgsTests
+    public class ListCommandArgsTests : CommandArgsBuilderTests
     {
         [Test]
         public void ToString_ByDefinition_HasListCommandName()
         {
-            var sources = DefaultSources();
-            var sut = new ListCommandArgs(sources);
+            var sut = DefaultListCommandArgs();
             var args = sut.ToString();
             Assert.AreEqual("list", args.Split(' ')[0]);
         }
@@ -18,16 +17,37 @@
         [Test]
         public void ToString_HasSearchTerms_IncludesSearchTerms()
         {
-            string terms = "FooBar";
-            var sources = DefaultSources();
-            var sut = new ListCommandArgs(sources);
+            string terms = "Foo Bar";
+            var sut = DefaultListCommandArgs();
             sut.SearchTerms = terms;
 
             var args = sut.ToString();
 
-            // TODO: Check whether several terms are valid
-            // Check whether we need to quote the whole block
-            Assert.AreEqual(terms, args.Split(' ')[1]);
+            Assert.AreEqual("Foo", args.Split(' ')[1]);
+            Assert.AreEqual("Bar", args.Split(' ')[2]);
+        }
+
+        [Test]
+        public void ToString_ShowAllVersions_AddsTheOption()
+        {
+            ListCommandArgs sut = DefaultListCommandArgs();
+            sut.ShowAllVersions = true;
+            var args = sut.ToString();
+            AssertContainsOption(args, "AllVersions");
+        }
+
+        [Test]
+        public void ToString_ShowPrerelease_AddsTheOption()
+        {
+            var sut = DefaultListCommandArgs();
+            sut.ShowPrerelase = true;
+            var args = sut.ToString();
+            AssertContainsOption(args, "Prerelease");
+        }
+
+        private ListCommandArgs DefaultListCommandArgs()
+        {
+            return new ListCommandArgs(DefaultSources());
         }
 
         private Sources DefaultSources()

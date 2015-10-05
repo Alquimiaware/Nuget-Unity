@@ -11,6 +11,8 @@
         { }
 
         public string SearchTerms { get; internal set; }
+        public bool ShowAllVersions { get; internal set; }
+        public bool ShowPrerelase { get; internal set; }
 
         protected override string CommandName
         {
@@ -27,7 +29,9 @@
 
         protected override string GetMoreOptions()
         {
-            return string.Empty;
+            return string.Concat(
+                this.ShowAllVersions ? "-AllVersions" : string.Empty,
+                this.ShowPrerelase ? "-Prerelease" : string.Empty);
         }
     }
 }

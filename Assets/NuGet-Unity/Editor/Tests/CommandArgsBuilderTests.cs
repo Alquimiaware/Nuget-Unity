@@ -2,86 +2,88 @@
 {
     using NUnit.Framework;
     using System;
-    using System.Collections.Generic;
     using UnityEngine;
 
     [TestFixture]
-    public class CommandArgsBuilderTests
+    public abstract class CommandArgsBuilderTests
     {
         private const string AnyCommandName = "Any";
         private const string AnyMoreOptions = "<MoreOptions>";
         private const string AnyDirectParams = "<DirectParameters>";
 
-        [Test]
-        public void Ctor_ByDefinition_RequiresSomeSource()
+        public class BaseFeatures : CommandArgsBuilderTests
         {
-            var nullSources = default(Sources);
-            var emptySources = CreateEmptySources();
-            Assert.Throws<ArgumentNullException>(
-                () => new AnyCommand(nullSources));
-            Assert.Throws<ArgumentOutOfRangeException>(
-                () => new AnyCommand(emptySources));
+            [Test]
+            public void Ctor_ByDefinition_RequiresSomeSource()
+            {
+                var nullSources = default(Sources);
+                var emptySources = CreateEmptySources();
+                Assert.Throws<ArgumentNullException>(
+                    () => new AnyCommand(nullSources));
+                Assert.Throws<ArgumentOutOfRangeException>(
+                    () => new AnyCommand(emptySources));
+            }
+
+            [Test]
+            public void ToString_ByDefinition_StartsWithCommandName()
+            {
+                var argsBuilder = CreateAnyCommandBuilder();
+                string args = argsBuilder.ToString();
+                Assert.AreEqual(AnyCommandName, args.Split(' ')[0]);
+            }
+
+            [Test]
+            public void ToString_ByDefinition_DirectParamsFollowCommandName()
+            {
+                var sut = CreateAnyCommandBuilder();
+                string args = sut.ToString();
+                Assert.AreEqual(AnyDirectParams, args.Split(' ')[1]);
+            }
+
+            [Test]
+            public void ToString_ByDefinition_ContainsExtraOptions()
+            {
+                var sut = CreateAnyCommandBuilder();
+                string args = sut.ToString();
+                AssertContains(AnyMoreOptions, args);
+            }
+
+            [Test]
+            public void ToString_HadOneSource_IncludesSource()
+            {
+                var localRepo = @"Z:/MyRepo/";
+                var anyCommand = CreateAnyCommandBuilder(localRepo);
+
+                string anyCommandArgs = anyCommand.ToString();
+                // Expected output must contain some, including ""
+                // -Source "source1path;source2Path"
+                // Questions:
+                // - Does the order matter? In which way?
+                // - What if nuget can't resolve a path
+                // - What if can't reach the remote path
+                AssertContainsOption(
+                    anyCommandArgs,
+                    "Source",
+                    string.Format("\"{0}\"", localRepo));
+            }
+
+            [Test]
+            public void ToString_HadSeveralSources_IncludesAllSources()
+            {
+                var localRepo = @"W:/CoolRepo/";
+                var remoteRepo = @"http:\\mynuget.org\repo";
+                var sut = CreateAnyCommandBuilder(localRepo, remoteRepo);
+
+                string anyCommandArgs = sut.ToString();
+
+                AssertContainsOption(
+                    anyCommandArgs,
+                    "Source",
+                    string.Format("\"{0};{1}\"", localRepo, remoteRepo));
+            }
         }
 
-        [Test]
-        public void ToString_ByDefinition_StartsWithCommandName()
-        {
-            var argsBuilder = CreateAnyCommandBuilder();
-            string args = argsBuilder.ToString();
-            Assert.AreEqual(AnyCommandName, args.Split(' ')[0]);
-        }
-
-        [Test]
-        public void ToString_ByDefinition_DirectParamsFollowCommandName()
-        {
-            var sut = CreateAnyCommandBuilder();
-            string args = sut.ToString();
-            Assert.AreEqual(AnyDirectParams, args.Split(' ')[1]);
-        }
-
-        [Test]
-        public void ToString_ByDefinition_ContainsExtraOptions()
-        {
-            var sut = CreateAnyCommandBuilder();
-            string args = sut.ToString();
-            AssertContains(AnyMoreOptions, args);
-        }
-
-        [Test]
-        public void ToString_HadOneSource_IncludesSource()
-        {
-            var localRepo = @"Z:/MyRepo/";
-            var anyCommand = CreateAnyCommandBuilder(localRepo);
-
-            string anyCommandArgs = anyCommand.ToString();
-            // Expected output must contain some, including ""
-            // -Source "source1path;source2Path"
-            // Questions:
-            // - Does the order matter? In which way?
-            // - What if nuget can't resolve a path
-            // - What if can't reach the remote path
-            AssertContainsOption(
-                anyCommandArgs,
-                "Source",
-                string.Format("\"{0}\"", localRepo));
-        }
-
-        [Test]
-        public void ToString_HadSeveralSources_IncludesAllSources()
-        {
-            var localRepo = @"W:/CoolRepo/";
-            var remoteRepo = @"http:\\mynuget.org\repo";
-            var sut = CreateAnyCommandBuilder(localRepo, remoteRepo);
-
-            string anyCommandArgs = sut.ToString();
-
-            AssertContainsOption(
-                anyCommandArgs,
-                "Source",
-                string.Format("\"{0};{1}\"", localRepo, remoteRepo));
-        }
-
-        private void AssertContains(string expectedSubstring, string text)
+        protected void AssertContains(string expectedSubstring, string text)
         {
             if (!text.Contains(expectedSubstring))
                 Assert.Fail(
@@ -89,7 +91,7 @@
                     expectedSubstring, text);
         }
 
-        private void AssertContainsOption(
+        protected void AssertContainsOption(
             string args,
             string expectedOption,
             string expectedValue = null)
