@@ -17,8 +17,8 @@
         {
             get
             {
-                return (local == null || local.Count == 0)
-                    && (remote == null || remote.Count == 0);
+                return (local == null || local.All(p => string.IsNullOrEmpty(p)))
+                    && (remote == null || remote.All(p => string.IsNullOrEmpty(p)));
             }
         }
 
