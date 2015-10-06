@@ -5,10 +5,13 @@ namespace Alquimiaware.NuGetUnity
     public class InstallCommandArgs
         : CommandArgsBuilder
     {
-        public InstallCommandArgs(Sources sources) 
+        public InstallCommandArgs(Sources sources)
             : base(sources)
         {
         }
+
+        public string OutputDirectory { get; internal set; }
+        public string PackageName { get; internal set; }
 
         protected override string CommandName
         {
@@ -20,12 +23,21 @@ namespace Alquimiaware.NuGetUnity
 
         protected override string GetDirectParams()
         {
-            return string.Empty;
+            return this.PackageName ?? string.Empty;
         }
 
         protected override string GetMoreOptions()
         {
-            return string.Empty;
+            string outOption =
+                this.OutputDirectory != null ?
+                string.Join(" ", new string[] 
+                {
+                    "-OutputDirectory",
+                    this.OutputDirectory
+                }) :
+                string.Empty;
+
+            return outOption;
         }
     }
 }
