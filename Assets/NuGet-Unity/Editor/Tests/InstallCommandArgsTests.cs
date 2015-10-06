@@ -78,6 +78,26 @@
             AssertDoesntContain(optionName, args);
         }
 
+        [Test]
+        public void ToString_SetAsNonInteractive_AddsTheOption()
+        {
+            const string optionName = "NonInteractive";
+            var sut = CreateDefaultInstallArgs();
+            sut.IsNonInteractive = true;
+            var args = sut.ToString();
+            AssertContainsOption(args, optionName);
+        }
+
+        [Test]
+        public void ToString_SetAsInteractive_DoesntAddNonInteractiveOption()
+        {
+            const string optionName = "NonInteractive";
+            var sut = CreateDefaultInstallArgs();
+            sut.IsNonInteractive = false;
+            var args = sut.ToString();
+            AssertDoesntContain(optionName, args);
+        }
+
         private InstallCommandArgs CreateDefaultInstallArgs()
         {
             return new InstallCommandArgs(DefaultSources());

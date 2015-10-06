@@ -14,6 +14,7 @@ namespace Alquimiaware.NuGetUnity
         public string OutputDirectory { get; internal set; }
         public string Version { get; internal set; }
         public bool AllowPrerelease { get; internal set; }
+        public bool IsNonInteractive { get; internal set; }
 
         protected override string CommandName
         {
@@ -36,6 +37,8 @@ namespace Alquimiaware.NuGetUnity
                 this.AddOption("Version", this.Version);
             if (this.AllowPrerelease)
                 this.AddOption("Prerelease");
+            if (this.IsNonInteractive)
+                this.AddOption("NonInteractive");
         }
     }
 }
