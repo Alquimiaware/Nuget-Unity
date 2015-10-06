@@ -5,7 +5,6 @@
 
     public class NuGetWindow : EditorWindow
     {
-        private ListCommand listCommand;
         private int tab;
         private SearchTab searchTab;
 
@@ -18,7 +17,7 @@
         private void OnEnable()
         {
             var listCommand = new ListCommand(GetSources());
-            this.searchTab = new SearchTab(this.listCommand);
+            this.searchTab = new SearchTab(listCommand);
         }
 
         private void OnGUI()
