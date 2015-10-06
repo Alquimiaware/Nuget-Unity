@@ -58,6 +58,26 @@
             AssertDoesntContain(optionName, args);
         }
 
+        [Test]
+        public void ToString_GivenPrerelease_AddsTheOption()
+        {
+            const string optionName = "Prerelease";
+            var sut = CreateDefaultInstallArgs();
+            sut.AllowPrerelease = true;
+            var args = sut.ToString();
+            AssertContainsOption(args, optionName);
+        }
+
+        [Test]
+        public void ToString_NotGivenPrerelease_DoesntAddOption()
+        {
+            const string optionName = "Prerelease";
+            var sut = CreateDefaultInstallArgs();
+            sut.AllowPrerelease = false;
+            var args = sut.ToString();
+            AssertDoesntContain(optionName, args);
+        }
+
         private InstallCommandArgs CreateDefaultInstallArgs()
         {
             return new InstallCommandArgs(DefaultSources());

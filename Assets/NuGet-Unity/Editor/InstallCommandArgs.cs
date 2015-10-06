@@ -13,6 +13,7 @@ namespace Alquimiaware.NuGetUnity
         public string PackageName { get; internal set; }
         public string OutputDirectory { get; internal set; }
         public string Version { get; internal set; }
+        public bool AllowPrerelease { get; internal set; }
 
         protected override string CommandName
         {
@@ -33,6 +34,8 @@ namespace Alquimiaware.NuGetUnity
                 this.AddOption("OutputDirectory", this.OutputDirectory);
             if (this.Version != null)
                 this.AddOption("Version", this.Version);
+            if (this.AllowPrerelease)
+                this.AddOption("Prerelease");
         }
     }
 }
