@@ -27,14 +27,12 @@
             return this.SearchTerms ?? string.Empty;
         }
 
-        protected override string GetMoreOptions()
+        protected override void AddMoreOptions()
         {
-            return string.Join(" ",
-                new string[]
-                {
-                    this.ShowAllVersions ? "-AllVersions" : string.Empty,
-                    this.ShowPrerelase ? "-Prerelease" : string.Empty
-                });
+            if (this.ShowAllVersions)
+                this.AddOption("AllVersions");
+            if (this.ShowPrerelase)
+                this.AddOption("Prerelease");
         }
     }
 }

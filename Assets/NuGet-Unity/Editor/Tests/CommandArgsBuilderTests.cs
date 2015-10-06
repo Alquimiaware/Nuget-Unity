@@ -8,8 +8,11 @@
     public abstract class CommandArgsBuilderTests
     {
         private const string AnyCommandName = "Any";
-        private const string AnyMoreOptions = "<MoreOptions>";
         private const string AnyDirectParams = "<DirectParameters>";
+        private static readonly string[] AnyMoreOptions = new string[]
+        {
+            "OptionA", "OptionB"
+        };
 
         public class BaseFeatures : CommandArgsBuilderTests
         {
@@ -45,7 +48,8 @@
             {
                 var sut = CreateAnyCommandBuilder();
                 string args = sut.ToString();
-                AssertContains(AnyMoreOptions, args);
+                AssertContainsOption(args, AnyMoreOptions[0]);
+                AssertContainsOption(args, AnyMoreOptions[1]);
             }
 
             [Test]
@@ -155,7 +159,7 @@
             return sources;
         }
 
-        private class AnyCommand : CommandArgsBuilder
+        public class AnyCommand : CommandArgsBuilder
         {
             protected override string CommandName
             {
@@ -169,9 +173,12 @@
                 : base(sources)
             { }
 
-            protected override string GetMoreOptions()
+            protected override void AddMoreOptions()
             {
-                return AnyMoreOptions;
+                foreach (var optionName in AnyMoreOptions)
+                {
+                    this.AddOption(optionName);
+                }
             }
 
             protected override string GetDirectParams()

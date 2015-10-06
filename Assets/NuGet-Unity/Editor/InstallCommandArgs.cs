@@ -26,18 +26,10 @@ namespace Alquimiaware.NuGetUnity
             return this.PackageName ?? string.Empty;
         }
 
-        protected override string GetMoreOptions()
+        protected override void AddMoreOptions()
         {
-            string outOption =
-                this.OutputDirectory != null ?
-                string.Join(" ", new string[] 
-                {
-                    "-OutputDirectory",
-                    this.OutputDirectory
-                }) :
-                string.Empty;
-
-            return outOption;
+            if (this.OutputDirectory != null)
+                this.AddOption("OutputDirectory", this.OutputDirectory);
         }
     }
 }
