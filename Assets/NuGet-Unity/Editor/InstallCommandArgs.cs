@@ -10,8 +10,9 @@ namespace Alquimiaware.NuGetUnity
         {
         }
 
-        public string OutputDirectory { get; internal set; }
         public string PackageName { get; internal set; }
+        public string OutputDirectory { get; internal set; }
+        public string Version { get; internal set; }
 
         protected override string CommandName
         {
@@ -30,6 +31,8 @@ namespace Alquimiaware.NuGetUnity
         {
             if (this.OutputDirectory != null)
                 this.AddOption("OutputDirectory", this.OutputDirectory);
+            if (this.Version != null)
+                this.AddOption("Version", this.Version);
         }
     }
 }

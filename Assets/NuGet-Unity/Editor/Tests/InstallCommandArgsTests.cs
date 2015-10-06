@@ -36,6 +36,28 @@
             AssertContainsOption(args, optionName, optionValue);
         }
 
+        [Test]
+        public void ToSting_GivenVersion_AddsOptionAndValue()
+        {
+            const string optionName = "Version";
+            const string optionValue = "1.2.3";
+
+            var sut = CreateDefaultInstallArgs();
+            sut.Version = optionValue;
+            var args = sut.ToString();
+            AssertContainsOption(args, optionName, optionValue);
+        }
+
+        [Test]
+        public void ToSting_NoGivenVersion_DoesntAddOption()
+        {
+            const string optionName = "Version";
+            var sut = CreateDefaultInstallArgs();
+            var args = sut.ToString();
+
+            AssertDoesntContain(optionName, args);
+        }
+
         private InstallCommandArgs CreateDefaultInstallArgs()
         {
             return new InstallCommandArgs(DefaultSources());
