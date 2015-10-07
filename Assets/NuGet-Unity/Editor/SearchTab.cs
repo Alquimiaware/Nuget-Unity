@@ -1,5 +1,6 @@
 ﻿namespace Alquimiaware.NuGetUnity
 {
+    using System;
     using UnityEditor;
     using UnityEngine;
 
@@ -64,9 +65,32 @@
                 GUILayout.ExpandWidth(true),
                 GUILayout.MaxWidth(2000));
 
-            GUILayout.Label(this.searchResult);
+            var results = this.searchResult.Split('\n');
+            foreach (var packageName in results)
+            {
+                if (string.IsNullOrEmpty(packageName))
+                    continue;
+
+                EditorGUILayout.BeginVertical();
+                EditorGUILayout.Space();
+                EditorGUILayout.BeginHorizontal();
+                GUILayout.Label(packageName, EditorStyles.largeLabel);
+                EditorGUILayout.Space();
+                if (GUILayout.Button("Install", GUILayout.MinWidth(80)))
+                    this.Install(packageName);
+
+                GUILayout.FlexibleSpace();
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.EndVertical();
+            }
+
             EditorGUILayout.EndScrollView();
             EditorGUILayout.EndVertical();
+        }
+
+        private void Install(string packageName)
+        {
+            Debug.Log(packageName);
         }
 
         private void Save()
