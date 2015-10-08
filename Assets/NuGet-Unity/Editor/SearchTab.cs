@@ -47,7 +47,8 @@
             if (EditorGUI.EndChangeCheck())
                 Save();
 
-            if (GUILayout.Button("Search", EditorStyles.toolbarButton))
+            if (GUILayout.Button("Search", EditorStyles.toolbarButton)
+              || Event.current.keyCode == KeyCode.Return)
             {
                 this.listCommand.ShowAllVersions = this.showAllVersions;
                 this.listCommand.ShowPrerelease = this.showPrerelease;
