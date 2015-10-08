@@ -16,8 +16,10 @@
 
         private void OnEnable()
         {
-            var listCommand = new ListCommand(GetSources());
-            this.searchTab = new SearchTab(listCommand);
+            var sources = GetSources();
+            var listCommand = new ListCommand(sources);
+            var installCommand = new InstallCommand(sources);
+            this.searchTab = new SearchTab(listCommand, installCommand);
         }
 
         private void OnGUI()

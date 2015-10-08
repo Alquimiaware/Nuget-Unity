@@ -14,7 +14,7 @@
             var installCmdArgs = new InstallCommandArgs(this.Sources);
             installCmdArgs.PackageName = packageName;
             installCmdArgs.Version = version;
-            installCmdArgs.OutputDirectory = OutputDir;
+            installCmdArgs.OutputDirectory = "\"" + OutputDir + "\"";
             installCmdArgs.AllowPrerelease = this.AllowPrerelease;
 
             return CallNuGet(installCmdArgs.ToString());

@@ -1,6 +1,8 @@
 ﻿namespace Alquimiaware.NuGetUnity
 {
     using System;
+    using System.IO;
+    using System.Linq;
     using UnityEditor;
     using UnityEngine;
 
@@ -12,10 +14,14 @@
         private string searchResult = string.Empty;
         private Vector2 ListScroll;
         private ListCommand listCommand;
+        private InstallCommand installCommand;
 
-        public SearchTab(ListCommand listCommand)
+        public SearchTab(
+            ListCommand listCommand,
+            InstallCommand installCommand)
         {
             this.listCommand = listCommand;
+            this.installCommand = installCommand;
         }
 
         public void OnGUI()
@@ -65,12 +71,14 @@
                 GUILayout.ExpandWidth(true),
                 GUILayout.MaxWidth(2000));
 
-            var results = this.searchResult.Split('\n');
+            var results = this.searchResult
+                .Split('\n')
+                .Where(n => !string.IsNullOrEmpty(n))
+                .Select(n => n.Trim());
+            // Trim is important to remove invisible chars, that conflict with nuget
+
             foreach (var packageName in results)
             {
-                if (string.IsNullOrEmpty(packageName))
-                    continue;
-
                 EditorGUILayout.BeginVertical();
                 EditorGUILayout.Space();
                 EditorGUILayout.BeginHorizontal();
@@ -90,7 +98,18 @@
 
         private void Install(string packageName)
         {
-            Debug.Log(packageName);
+            var terms = packageName.Split(' ');
+            var name = terms[0];
+            var version = terms[1];
+
+            this.installCommand.OutputDir
+                = Path.Combine(Application.dataPath, "Packages/Temp");
+            this.installCommand.AllowPrerelease =
+                this.showPrerelease;
+
+            var output = this.installCommand.Execute(name, version);
+            Debug.Log(output);
+            AssetDatabase.Refresh();
         }
 
         private void Save()
