@@ -103,10 +103,11 @@
             var name = terms[0];
             var version = terms[1];
 
-            this.installCommand.OutputDir
-                = Path.Combine(Application.dataPath, "Packages/Temp");
-            this.installCommand.AllowPrerelease =
-                this.showPrerelease;
+            var outDir = Path.Combine(
+                Application.dataPath,
+                "../Library/Packages/Temp");
+            this.installCommand.OutputDirectory = outDir;
+            this.installCommand.AllowPrerelease = this.showPrerelease;
 
             var output = this.installCommand.Execute(name, version);
             Debug.Log(output);
