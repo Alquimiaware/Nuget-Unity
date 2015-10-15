@@ -45,6 +45,23 @@
         }
 
         [Test]
+        public void IsPackageSource_CandidateHasNoNupkg_ReturnsFalse()
+        {
+            var pkgRoot = CreateEmptyFolder("PkgName");
+            var sut = Default();
+            Assert.IsFalse(sut.IsPackageSource(SourcePath()));
+        }
+
+        [Test]
+        public void IsPackageSource_CandidateHasNoLib_ReturnsFalse()
+        {
+            var pkgRoot = CreatePackage("PkgName", "net35");
+            pkgRoot.GetDirectories("lib")[0].Delete(true);
+            var sut = Default();
+            Assert.IsFalse(sut.IsPackageSource(SourcePath()));
+        }
+
+        [Test]
         public void IsPackageSource_SourceHasSeveralPackages_ReturnsTrue()
         {
             CreatePackage("Sonic", "net35", "net20");
@@ -107,7 +124,7 @@
             return Directory.CreateDirectory(folderPath);
         }
 
-        public static void CreatePackage(
+        public static DirectoryInfo CreatePackage(
             string name,
             params string[] targetFrameworks)
         {
@@ -116,7 +133,9 @@
             foreach (var targetName in targetFrameworks)
                 CreateTargetFrameworkSpecific(name, targetName, lib);
             CreateFile(name + ".nupkg", pkgRoot);
-            CreateFile("[Content_Types].xml", pkgRoot);
+            ////CreateFile("[Content_Types].xml", pkgRoot);
+
+            return pkgRoot;
         }
 
         private static void CreateTargetFrameworkSpecific(

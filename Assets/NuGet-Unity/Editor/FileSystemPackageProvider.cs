@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
 
     public class FileSystemPackageProvider : IPackageProvider
     {
@@ -23,7 +24,20 @@
         private bool IsEmpty(string folderPath)
         {
             var di = new DirectoryInfo(folderPath);
-            return di.GetDirectories().Length == 0;
+            return GetPackageDirectories(di).Length == 0;
+        }
+
+        private DirectoryInfo[] GetPackageDirectories(DirectoryInfo container)
+        {
+            return container.GetDirectories()
+                            .Where(di => IsValidPkgDirectory(di))
+                            .ToArray();
+        }
+
+        private static bool IsValidPkgDirectory(DirectoryInfo di)
+        {
+            return di.GetFiles("*.nupkg").Length == 1
+                && di.GetDirectories("lib").Length == 1;
         }
     }
 }
