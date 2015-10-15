@@ -36,8 +36,14 @@
 
         private static bool IsValidPkgDirectory(DirectoryInfo di)
         {
-            return di.GetFiles("*.nupkg").Length == 1
-                && di.GetDirectories("lib").Length == 1;
+            bool hasNupkg = di.GetFiles("*.nupkg").Length == 1;
+
+            var libs = di.GetDirectories("lib");
+            bool hasLib = libs.Length == 1;
+
+            return hasNupkg
+                && hasLib
+                && libs[0].GetDirectories().Length > 0;
         }
     }
 }

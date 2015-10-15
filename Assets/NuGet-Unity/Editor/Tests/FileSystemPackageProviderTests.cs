@@ -47,7 +47,7 @@
         [Test]
         public void IsPackageSource_CandidateHasNoNupkg_ReturnsFalse()
         {
-            var pkgRoot = CreateEmptyFolder("PkgName");
+            CreateEmptyFolder("PkgName");
             var sut = Default();
             Assert.IsFalse(sut.IsPackageSource(SourcePath()));
         }
@@ -57,6 +57,14 @@
         {
             var pkgRoot = CreatePackage("PkgName", "net35");
             pkgRoot.GetDirectories("lib")[0].Delete(true);
+            var sut = Default();
+            Assert.IsFalse(sut.IsPackageSource(SourcePath()));
+        }
+
+        [Test]
+        public void IsPackageSource_CandidateHasNoTargets_ReturnsFalse()
+        {
+            CreatePackage("PkgName");
             var sut = Default();
             Assert.IsFalse(sut.IsPackageSource(SourcePath()));
         }
