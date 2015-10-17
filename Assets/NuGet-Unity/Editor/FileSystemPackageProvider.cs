@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
 
     public class FileSystemPackageProvider : IPackageProvider
     {
@@ -29,8 +30,23 @@
             return targetDirs.Select(di => new TargetLib()
             {
                 Name = di.Name,
-                FolderLocation = di.FullName
+                FolderLocation = di.FullName,
+                ReferenceNames = GetReferenceNames(di)
             }).ToArray();
+        }
+
+        private List<string> GetReferenceNames(DirectoryInfo di)
+        {
+            var dllPath = di.GetFiles("*.dll")[0].FullName;
+
+            // We have to load it this way so the file is not locked after loading
+            byte[] assemblyBytes = File.ReadAllBytes(dllPath);
+            var dll = Assembly.Load(assemblyBytes);
+            var referencedAssemblies = dll.GetReferencedAssemblies();
+
+            return referencedAssemblies
+                      .Select(a => a.Name)
+                      .ToList();
         }
 
         public bool IsPackageSource(string packagesFolderPath)

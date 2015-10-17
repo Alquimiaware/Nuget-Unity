@@ -7,23 +7,30 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Reflection;
+    using UnityEditor.Callbacks;
     using UnityEngine;
 
     [TestFixture, Category("Integration")]
     public class FileSystemPackageProviderTests
     {
+        [DidReloadScripts]
+        public static void OnRecompilation()
+        {
+            DeleteSourceDirectory();
+            SampleAssebly.Delete();
+            SampleAssebly.EnsureExists();
+        }
+
         [SetUp]
         public void Setup()
         {
             Directory.CreateDirectory(SourcePath());
-            EnsureSampleAssemblyExists();
         }
 
         [TearDown]
         public void Teardown()
         {
-            Directory.Delete(SourcePath(), true);
+            DeleteSourceDirectory();
         }
 
         public class SourceValidation : FileSystemPackageProviderTests
@@ -117,12 +124,12 @@
             [Test]
             public void GetAll_OnePackage_GetsTargetRefereceNames()
             {
-                var di = CreatePackage("Foo", "net40");
+                CreatePackage("Foo", "net40");
                 var fooPkg = GetPackages()[0];
 
-                var expected = GetSampleAssemblyReferenceNames().ToList();
+                var expected = SampleAssebly.References;
                 var actual = fooPkg.TargetLibs[0].ReferenceNames;
-                CollectionAssert.AreEqual(expected, actual);
+                CollectionAssert.AreEquivalent(expected, actual);
             }
 
             private static void AssertHasTarget(
@@ -175,13 +182,12 @@
             public void Setup()
             {
                 Directory.CreateDirectory(SourcePath());
-                EnsureSampleAssemblyExists();
             }
 
             [TearDown]
             public void Teardown()
             {
-                Directory.Delete(SourcePath(), true);
+                DeleteSourceDirectory();
             }
 
             protected override IPackageProvider CreateProvider()
@@ -201,9 +207,75 @@
             }
         }
 
+        private class SampleAssebly
+        {
+            private const string SampleAssemblyCode =
+            @"class SampleConstant 
+              { 
+                // Force using a type of each reference
+                // so it's not optimized out
+                System.Xml.XmlComment Comment;
+                System.Xml.Linq.XDocument XDoc;
+              }";
+
+            public readonly static string[] References =
+                new string[]
+                {
+                "mscorlib",  // Will be added by default, make it explicit
+                "System.Xml",
+                "System.Xml.Linq"
+                };
+
+            private static string FullPath
+            {
+                get
+                {
+                    return Path.Combine(
+                        Application.dataPath,
+                        "../Library/FileSystemTestSamples/SampleAssembly.dll");
+                }
+            }
+
+            public static void EnsureExists()
+            {
+                if (File.Exists(FullPath))
+                    return;
+
+                var csc = new CSharpCodeProvider();
+                var compileParams =
+                    new CompilerParameters(References);
+                compileParams.OutputAssembly = FullPath;
+
+                // Ensure dest folder exists
+                Directory.CreateDirectory(Path.GetDirectoryName(FullPath));
+
+                csc.CompileAssemblyFromSource(
+                    compileParams,
+                    SampleAssemblyCode);
+            }
+
+            public static void Delete()
+            {
+                if (File.Exists(FullPath))
+                    File.Delete(FullPath);
+            }
+
+            public static void CopyTo(string destPath)
+            {
+                File.Copy(FullPath, destPath, true);
+            }
+        }
+
         private static FileSystemPackageProvider Default()
         {
             return new FileSystemPackageProvider();
+        }
+
+        public static void DeleteSourceDirectory()
+        {
+            var sourcePath = SourcePath();
+            if (Directory.Exists(sourcePath))
+                Directory.Delete(sourcePath, true);
         }
 
         public static string SourcePath()
@@ -241,42 +313,9 @@
             DirectoryInfo container)
         {
             var di = container.CreateSubdirectory(targetName);
-            File.Copy(
-                GetSampleAssemblyPath(),
-                Path.Combine(di.FullName, name + ".dll"));
+            SampleAssebly.CopyTo(Path.Combine(di.FullName, name + ".dll"));
             CreateFile(name + ".xml", di);
             CreateFile(name + ".pdb", di);
-        }
-
-        private static string GetSampleAssemblyPath()
-        {
-            return Path.Combine(
-                Application.dataPath,
-                "../Library/FileSystemTestSamples/SampleAssembly.dll");
-        }
-
-        private static void EnsureSampleAssemblyExists()
-        {
-            if (File.Exists(GetSampleAssemblyPath()))
-                return;
-
-            var csc = new CSharpCodeProvider();
-            var compileParams = new CompilerParameters(
-                GetSampleAssemblyReferenceNames());
-            compileParams.OutputAssembly = GetSampleAssemblyPath();
-
-            // Ensure dest folder exists
-            Directory.CreateDirectory(
-                Path.GetDirectoryName(GetSampleAssemblyPath()));
-
-            csc.CompileAssemblyFromSource(
-                compileParams,
-                "class SampleConstant { const int K = 42; }");
-        }
-
-        private static string[] GetSampleAssemblyReferenceNames()
-        {
-            return new string[] { "System.dll", "System.Core" };
         }
 
         private static void CreateFile(string name, DirectoryInfo di)
