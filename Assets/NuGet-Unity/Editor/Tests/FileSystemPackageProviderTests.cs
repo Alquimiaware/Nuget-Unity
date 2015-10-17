@@ -4,6 +4,8 @@
     using NUnit.Framework;
     using System.IO;
     using System.Collections.Generic;
+    using System.Linq;
+    using System;
 
     [TestFixture, Category("Integration")]
     public class FileSystemPackageProviderTests
@@ -95,6 +97,53 @@
                 var pkg = packages[0];
                 Assert.AreEqual("Foo", pkg.Name);
                 Assert.AreEqual(pkg.FolderLocation, di.FullName);
+            }
+
+
+            [Test]
+            public void GetAll_OnePackage_GetsTargetDeliverables()
+            {
+                var di = CreatePackage("Foo", "net35", "net20");
+                List<Package> packages = GetPackages();
+                var fooPkg = packages[0];
+                AssertHasTarget(fooPkg, "net35");
+                AssertHasTarget(fooPkg, "net20");
+            }
+
+            private static void AssertHasTarget(
+                Package fooPkg,
+                string expectedTargetName)
+            {
+                string expectedTargetLocation = Path.Combine(
+                    SourcePath(),
+                    fooPkg.Name + "/lib/" + expectedTargetName);
+
+                Assert.IsNotNull(fooPkg.TargetLibs);
+                var target = fooPkg.TargetLibs.FirstOrDefault(
+                        l => l.Name == expectedTargetName);
+
+                Assert.IsTrue(
+                    target != null
+                    && AreEquivalentPaths(
+                        expectedTargetLocation,
+                        target.FolderLocation),
+                    string.Format(
+                        "Expected target : {0}\n" +
+                        "Expected location: {1}\n" +
+                        "Actual target: {2}\n" +
+                        "Actual location: {3}",
+                        Path.GetFullPath(expectedTargetName),
+                        Path.GetFullPath(expectedTargetLocation),
+                        target != null ? target.Name : "<Target Not Found>",
+                        target != null ? target.FolderLocation : "<Target Not Found>"));
+            }
+
+            private static bool AreEquivalentPaths(string pathA, string pathB)
+            {
+                return string.Equals(
+                    Path.GetFullPath(pathA),
+                    Path.GetFullPath(pathB),
+                    StringComparison.OrdinalIgnoreCase);
             }
 
             private static List<Package> GetPackages()

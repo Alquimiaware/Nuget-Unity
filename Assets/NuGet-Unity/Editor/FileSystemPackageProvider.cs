@@ -17,8 +17,20 @@
 
             return folders.Select(di => new Package(
                                  di.Name,
-                                 di.FullName))
+                                 di.FullName,
+                                 GetTargetLibs(di)))
                           .ToList();
+        }
+
+        private TargetLib[] GetTargetLibs(DirectoryInfo pkgContainger)
+        {
+            var libDir = pkgContainger.GetDirectories("lib")[0];
+            var targetDirs = libDir.GetDirectories();
+            return targetDirs.Select(di => new TargetLib()
+            {
+                Name = di.Name,
+                FolderLocation = di.FullName
+            }).ToArray();
         }
 
         public bool IsPackageSource(string packagesFolderPath)

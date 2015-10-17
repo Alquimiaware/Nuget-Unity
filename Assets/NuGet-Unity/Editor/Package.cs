@@ -15,7 +15,7 @@ namespace Alquimiaware.NuGetUnity
 
         public string Name { get; private set; }
         public string FolderLocation { get; private set; }
-        public List<TargetLib> TargetLibs { get; internal set; }
+        public List<TargetLib> TargetLibs { get; private set; }
 
         public override string ToString()
         {
