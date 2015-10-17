@@ -1,11 +1,14 @@
 ﻿namespace Alquimiaware.NuGetUnity.Tests
 {
-    using UnityEngine;
+    using Microsoft.CSharp;
     using NUnit.Framework;
-    using System.IO;
-    using System.Collections.Generic;
-    using System.Linq;
     using System;
+    using System.CodeDom.Compiler;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using UnityEngine;
 
     [TestFixture, Category("Integration")]
     public class FileSystemPackageProviderTests
@@ -14,6 +17,7 @@
         public void Setup()
         {
             Directory.CreateDirectory(SourcePath());
+            EnsureSampleAssemblyExists();
         }
 
         [TearDown]
@@ -103,11 +107,22 @@
             [Test]
             public void GetAll_OnePackage_GetsTargetDeliverables()
             {
-                var di = CreatePackage("Foo", "net35", "net20");
+                CreatePackage("Foo", "net35", "net20");
                 List<Package> packages = GetPackages();
                 var fooPkg = packages[0];
                 AssertHasTarget(fooPkg, "net35");
                 AssertHasTarget(fooPkg, "net20");
+            }
+
+            [Test]
+            public void GetAll_OnePackage_GetsTargetRefereceNames()
+            {
+                var di = CreatePackage("Foo", "net40");
+                var fooPkg = GetPackages()[0];
+
+                var expected = GetSampleAssemblyReferenceNames().ToList();
+                var actual = fooPkg.TargetLibs[0].ReferenceNames;
+                CollectionAssert.AreEqual(expected, actual);
             }
 
             private static void AssertHasTarget(
@@ -160,6 +175,7 @@
             public void Setup()
             {
                 Directory.CreateDirectory(SourcePath());
+                EnsureSampleAssemblyExists();
             }
 
             [TearDown]
@@ -215,7 +231,6 @@
             foreach (var targetName in targetFrameworks)
                 CreateTargetFrameworkSpecific(name, targetName, lib);
             CreateFile(name + ".nupkg", pkgRoot);
-            ////CreateFile("[Content_Types].xml", pkgRoot);
 
             return pkgRoot;
         }
@@ -226,15 +241,59 @@
             DirectoryInfo container)
         {
             var di = container.CreateSubdirectory(targetName);
-            CreateFile(name + ".dll", di);
+            File.Copy(
+                GetSampleAssemblyPath(),
+                Path.Combine(di.FullName, name + ".dll"));
             CreateFile(name + ".xml", di);
             CreateFile(name + ".pdb", di);
+        }
+
+        private static string GetSampleAssemblyPath()
+        {
+            return Path.Combine(
+                Application.dataPath,
+                "../Library/FileSystemTestSamples/SampleAssembly.dll");
+        }
+
+        private static void EnsureSampleAssemblyExists()
+        {
+            if (File.Exists(GetSampleAssemblyPath()))
+                return;
+
+            var csc = new CSharpCodeProvider();
+            var compileParams = new CompilerParameters(
+                GetSampleAssemblyReferenceNames());
+            compileParams.OutputAssembly = GetSampleAssemblyPath();
+
+            // Ensure dest folder exists
+            Directory.CreateDirectory(
+                Path.GetDirectoryName(GetSampleAssemblyPath()));
+
+            csc.CompileAssemblyFromSource(
+                compileParams,
+                "class SampleConstant { const int K = 42; }");
+        }
+
+        private static string[] GetSampleAssemblyReferenceNames()
+        {
+            return new string[] { "System.dll", "System.Core" };
         }
 
         private static void CreateFile(string name, DirectoryInfo di)
         {
             File.Create(Path.Combine(di.FullName, name))
                 .Dispose();
+        }
+
+        private static TargetLib TargetLib(
+            string name,
+            params string[] referenceNames)
+        {
+            return new TargetLib()
+            {
+                Name = name,
+                ReferenceNames = referenceNames.ToList()
+            };
         }
     }
 }
