@@ -3,6 +3,7 @@
     using UnityEngine;
     using NUnit.Framework;
     using System.IO;
+    using System.Collections.Generic;
 
     [TestFixture, Category("Integration")]
     public class FileSystemPackageProviderTests
@@ -19,64 +20,88 @@
             Directory.Delete(SourcePath(), true);
         }
 
-        [Test]
-        public void IsPackageSource_FolderNotExists_ReturnsFalse()
+        public class SourceValidation : FileSystemPackageProviderTests
         {
-            var sut = Default();
-            var isValid = sut.IsPackageSource(
-                Path.Combine(SourcePath(), "FooBarNotThere"));
-            Assert.IsFalse(isValid);
+            [Test]
+            public void IsPackageSource_FolderNotExists_ReturnsFalse()
+            {
+                var sut = Default();
+                var isValid = sut.IsPackageSource(
+                    Path.Combine(SourcePath(), "FooBarNotThere"));
+                Assert.IsFalse(isValid);
+            }
+
+            [Test]
+            public void IsPackageSource_EmptyFolder_ReturnsFalse()
+            {
+                var sut = Default();
+                var isValid = sut.IsPackageSource(SourcePath());
+                Assert.IsFalse(isValid);
+            }
+
+            [Test]
+            public void IsPackageSource_SourceHasOnePackage_ReturnsTrue()
+            {
+                CreatePackage("FooBar", "net35", "net20");
+                var sut = Default();
+                Assert.IsTrue(sut.IsPackageSource(SourcePath()));
+            }
+
+            [Test]
+            public void IsPackageSource_CandidateHasNoNupkg_ReturnsFalse()
+            {
+                CreateEmptyFolder("PkgName");
+                var sut = Default();
+                Assert.IsFalse(sut.IsPackageSource(SourcePath()));
+            }
+
+            [Test]
+            public void IsPackageSource_CandidateHasNoLib_ReturnsFalse()
+            {
+                var pkgRoot = CreatePackage("PkgName", "net35");
+                pkgRoot.GetDirectories("lib")[0].Delete(true);
+                var sut = Default();
+                Assert.IsFalse(sut.IsPackageSource(SourcePath()));
+            }
+
+            [Test]
+            public void IsPackageSource_CandidateHasNoTargets_ReturnsFalse()
+            {
+                CreatePackage("PkgName");
+                var sut = Default();
+                Assert.IsFalse(sut.IsPackageSource(SourcePath()));
+            }
+
+            [Test]
+            public void IsPackageSource_SourceHasSeveralPackages_ReturnsTrue()
+            {
+                CreatePackage("Sonic", "net35", "net20");
+                CreatePackage("Ruby", "net35", "net20");
+                CreatePackage("Green", "net35", "net20");
+                var sut = Default();
+                Assert.IsTrue(sut.IsPackageSource(SourcePath()));
+            }
         }
 
-        [Test]
-        public void IsPackageSource_EmptyFolder_ReturnsFalse()
+        public class ValidSource : FileSystemPackageProviderTests
         {
-            var sut = Default();
-            var isValid = sut.IsPackageSource(SourcePath());
-            Assert.IsFalse(isValid);
-        }
+            [Test]
+            public void GetAll_OnePackage_GetsNameAndPath()
+            {
+                var di = CreatePackage("Foo", "net35");
+                List<Package> packages = GetPackages();
 
-        [Test]
-        public void IsPackageSource_SourceHasOnePackage_ReturnsTrue()
-        {
-            CreatePackage("FooBar", "net35", "net20");
-            var sut = Default();
-            Assert.IsTrue(sut.IsPackageSource(SourcePath()));
-        }
+                Assert.AreEqual(1, packages.Count);
+                var pkg = packages[0];
+                Assert.AreEqual("Foo", pkg.Name);
+                Assert.AreEqual(pkg.FolderLocation, di.FullName);
+            }
 
-        [Test]
-        public void IsPackageSource_CandidateHasNoNupkg_ReturnsFalse()
-        {
-            CreateEmptyFolder("PkgName");
-            var sut = Default();
-            Assert.IsFalse(sut.IsPackageSource(SourcePath()));
-        }
-
-        [Test]
-        public void IsPackageSource_CandidateHasNoLib_ReturnsFalse()
-        {
-            var pkgRoot = CreatePackage("PkgName", "net35");
-            pkgRoot.GetDirectories("lib")[0].Delete(true);
-            var sut = Default();
-            Assert.IsFalse(sut.IsPackageSource(SourcePath()));
-        }
-
-        [Test]
-        public void IsPackageSource_CandidateHasNoTargets_ReturnsFalse()
-        {
-            CreatePackage("PkgName");
-            var sut = Default();
-            Assert.IsFalse(sut.IsPackageSource(SourcePath()));
-        }
-
-        [Test]
-        public void IsPackageSource_SourceHasSeveralPackages_ReturnsTrue()
-        {
-            CreatePackage("Sonic", "net35", "net20");
-            CreatePackage("Ruby", "net35", "net20");
-            CreatePackage("Green", "net35", "net20");
-            var sut = Default();
-            Assert.IsTrue(sut.IsPackageSource(SourcePath()));
+            private static List<Package> GetPackages()
+            {
+                var sut = Default();
+                return sut.GetAll(SourcePath());
+            }
         }
 
         [Category("Integration")]

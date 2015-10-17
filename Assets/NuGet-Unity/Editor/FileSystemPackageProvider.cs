@@ -12,7 +12,13 @@
             if (!this.IsPackageSource(packagesFolderPath))
                 throw new ArgumentOutOfRangeException("packagesFolderPath");
 
-            return null;
+            var folders = Directory.GetDirectories(packagesFolderPath)
+                                   .Select(path => new DirectoryInfo(path));
+
+            return folders.Select(di => new Package(
+                                 di.Name,
+                                 di.FullName))
+                          .ToList();
         }
 
         public bool IsPackageSource(string packagesFolderPath)
