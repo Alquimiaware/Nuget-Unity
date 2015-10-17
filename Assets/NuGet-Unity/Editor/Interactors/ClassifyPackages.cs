@@ -36,13 +36,14 @@
                 Runtime = runtimeGroup != null ?
                           runtimeGroup.ToList() :
                           new List<Package>()
-        };
-    }
+            };
+        }
 
-    private bool IsEditor(Package package)
-    {
-        return package.ReferenceNames
-                      .Contains("UnityEditor");
+        private bool IsEditor(Package package)
+        {
+            return package.TargetLibs
+                          .Any(lib => lib.ReferenceNames
+                                         .Contains("UnityEditor"));
+        }
     }
-}
 }

@@ -4,6 +4,7 @@
     using System;
     using NSubstitute;
     using System.Collections.Generic;
+    using System.Linq;
 
     [TestFixture]
     public class ClassifyPackagesTests
@@ -73,12 +74,26 @@
 
         private static Package EditorPkg(string name = null)
         {
-            return new Package(name, AnyPath, "UnityEditor");
+            return new Package(
+                name,
+                AnyPath,
+                TargetLib("AnyTarget", "UnityEditor"));
         }
 
         private static Package RuntimePkg(string name = null)
         {
             return new Package(name, AnyPath);
+        }
+
+        private static TargetLib TargetLib(
+            string name,
+            params string[] referenceNames)
+        {
+            return new TargetLib()
+            {
+                Name = name,
+                ReferenceNames = referenceNames.ToList()
+            };
         }
 
         private static ClassifyPackages DefaultWithPackages(
