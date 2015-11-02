@@ -6,18 +6,23 @@
             : base(sources)
         { }
 
-        public string OutputDir { get; set; }
+        public string OutputDirectory { get; set; }
         public bool AllowPrerelease { get; set; }
 
         public string Execute(string packageName, string version)
         {
+            InstallCommandArgs installCmdArgs = GetCommandArgs(packageName, version);
+            return CallNuGet(installCmdArgs.ToString());
+        }
+
+        private InstallCommandArgs GetCommandArgs(string packageName, string version)
+        {
             var installCmdArgs = new InstallCommandArgs(this.Sources);
             installCmdArgs.PackageName = packageName;
             installCmdArgs.Version = version;
-            installCmdArgs.OutputDirectory = "\"" + OutputDir + "\"";
+            installCmdArgs.OutputDirectory = "\"" + this.OutputDirectory + "\"";
             installCmdArgs.AllowPrerelease = this.AllowPrerelease;
-
-            return CallNuGet(installCmdArgs.ToString());
+            return installCmdArgs;
         }
     }
 }

@@ -37,7 +37,7 @@
         }
 
         [Test]
-        public void ToSting_GivenVersion_AddsOptionAndValue()
+        public void ToString_GivenVersion_AddsOptionAndValue()
         {
             const string optionName = "Version";
             const string optionValue = "1.2.3";
@@ -49,7 +49,7 @@
         }
 
         [Test]
-        public void ToSting_NoGivenVersion_DoesntAddOption()
+        public void ToString_NoGivenVersion_DoesntAddOption()
         {
             const string optionName = "Version";
             var sut = CreateDefaultInstallArgs();

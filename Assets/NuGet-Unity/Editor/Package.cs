@@ -1,5 +1,4 @@
-﻿
-namespace Alquimiaware.NuGetUnity
+﻿namespace Alquimiaware.NuGetUnity
 {
     using System.Collections.Generic;
     using System.Linq;

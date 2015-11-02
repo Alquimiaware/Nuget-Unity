@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Alquimiaware.NuGetUnity
+﻿namespace Alquimiaware.NuGetUnity
 {
+    using System.Collections.Generic;
+
     public interface IPackageProvider
     {
         bool IsPackageSource(string packagesFolderPath);
