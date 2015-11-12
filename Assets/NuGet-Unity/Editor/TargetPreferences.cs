@@ -1,6 +1,8 @@
 ﻿namespace Alquimiaware.NuGetUnity
 {
+    using System;
     using System.Collections.Generic;
+    using UnityEditor;
 
     public class TargetPreferences
     {
@@ -33,6 +35,18 @@
         public string FallbackTarget
         {
             get; private set;
+        }
+
+        internal static TargetPreferences GetEditorPrefs()
+        {
+            return DotNetFull;
+        }
+
+        internal static TargetPreferences GetRuntimePrefs()
+        {
+            return PlayerSettings.apiCompatibilityLevel == ApiCompatibilityLevel.NET_2_0_Subset ?
+                   DotNetSubset :
+                   DotNetFull;
         }
     }
 }

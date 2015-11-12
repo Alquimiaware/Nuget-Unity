@@ -17,10 +17,10 @@
         private void OnEnable()
         {
             var sources = GetSources();
-            var fsPackageProvider = new FileSystemPackageProvider();
             var listCommand = new ListCommand(sources);
-            var installCommand = new InstallCommand(sources);
+            var fsPackageProvider = new FileSystemPackageProvider();
             var classifyPackages = new ClassifyPackages(fsPackageProvider);
+            var installCommand = new InstallCommand(sources, classifyPackages, new FileSystemFolderCommands());
             this.searchTab = new SearchTab(listCommand, installCommand);
         }
 

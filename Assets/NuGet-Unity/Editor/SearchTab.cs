@@ -103,13 +103,12 @@
             var name = terms[0];
             var version = terms[1];
 
-            var outDir = Path.Combine(
-                Application.dataPath,
-                "../Library/Packages/Temp");
-            this.installCommand.OutputDirectory = outDir;
+            this.installCommand.OutputDirectory =
+                Path.Combine(Application.dataPath, "Packages/");
             this.installCommand.AllowPrerelease = this.showPrerelease;
 
             var output = this.installCommand.Execute(name, version);
+
             Debug.Log(output);
             AssetDatabase.Refresh();
         }
