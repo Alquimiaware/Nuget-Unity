@@ -15,6 +15,10 @@
             Net35Target,
             UnitySubsetTarget);
 
+        private readonly static IRuntimeCompatibility defaultCompatibility = new UnityCompatibility();
+
+        private static IRuntimeCompatibility runtimeCompatibility;
+
         // Target official names
         private const string UnityFullTarget = "net35-Unity Full v3.5";
         private const string UnitySubsetTarget = "net35-Unity Subset v3.5";
@@ -26,11 +30,6 @@
         {
             this.FallbackTarget = fallbackTarget;
             this.DecreasingPriorityTargets = decreasingPriorityTargets;
-        }
-
-        static TargetPreferences()
-        {
-            RuntimeCompatibility = new UnityCompatibility();
         }
 
         public IEnumerable<string> DecreasingPriorityTargets
@@ -55,11 +54,21 @@
                    DotNetFull;
         }
 
-        public static IRuntimeCompatibility RuntimeCompatibility { get; set; }
+        public static IRuntimeCompatibility RuntimeCompatibility
+        {
+            get
+            {
+                return runtimeCompatibility ?? defaultCompatibility;
+            }
+            set
+            {
+                runtimeCompatibility = value;
+            }
+        }
 
         private static bool IsSubsetRuntime()
         {
-            return  RuntimeCompatibility.Level == ApiCompatibilityLevel.NET_2_0_Subset;
+            return RuntimeCompatibility.Level == ApiCompatibilityLevel.NET_2_0_Subset;
         }
 
         public interface IRuntimeCompatibility
@@ -83,7 +92,7 @@
             return string.Format(
                 "Fallback: {0}, DecreasingPriority: {1}",
                 this.FallbackTarget,
-                string.Join("," , this.DecreasingPriorityTargets.ToArray()));
+                string.Join(",", this.DecreasingPriorityTargets.ToArray()));
         }
     }
 }

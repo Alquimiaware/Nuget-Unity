@@ -43,6 +43,16 @@
             Assert.AreEqual(TargetPreferences.DotNetFull, prefs);
         }
 
+        [Test]
+        public void RuntimeCompatibility_ByDefault_ReturnsUnityApiCompatibility()
+        {
+            TargetPreferences.RuntimeCompatibility = null;
+            var expected = PlayerSettings.apiCompatibilityLevel;
+            var actual = TargetPreferences.RuntimeCompatibility.Level;
+
+            Assert.AreEqual(expected, actual);
+        }
+
         private static TargetPreferences.IRuntimeCompatibility FullCompatibility()
         {
             var alwaysFullCompatibility = Substitute.For<TargetPreferences.IRuntimeCompatibility>();

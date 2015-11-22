@@ -12,7 +12,6 @@
 
         public void Delete(string path)
         {
-            Debug.Log(path);
             Directory.Delete(path, true);
         }
 
