@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using UnityEditor;
 
     public class TargetPreferences
@@ -27,6 +28,11 @@
             this.DecreasingPriorityTargets = decreasingPriorityTargets;
         }
 
+        static TargetPreferences()
+        {
+            RuntimeCompatibility = new UnityCompatibility();
+        }
+
         public IEnumerable<string> DecreasingPriorityTargets
         {
             get; private set;
@@ -44,9 +50,40 @@
 
         internal static TargetPreferences GetRuntimePrefs()
         {
-            return PlayerSettings.apiCompatibilityLevel == ApiCompatibilityLevel.NET_2_0_Subset ?
+            return IsSubsetRuntime() ?
                    DotNetSubset :
                    DotNetFull;
+        }
+
+        public static IRuntimeCompatibility RuntimeCompatibility { get; set; }
+
+        private static bool IsSubsetRuntime()
+        {
+            return  RuntimeCompatibility.Level == ApiCompatibilityLevel.NET_2_0_Subset;
+        }
+
+        public interface IRuntimeCompatibility
+        {
+            ApiCompatibilityLevel Level { get; }
+        }
+
+        private class UnityCompatibility : IRuntimeCompatibility
+        {
+            public ApiCompatibilityLevel Level
+            {
+                get
+                {
+                    return PlayerSettings.apiCompatibilityLevel;
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            return string.Format(
+                "Fallback: {0}, DecreasingPriority: {1}",
+                this.FallbackTarget,
+                string.Join("," , this.DecreasingPriorityTargets.ToArray()));
         }
     }
 }
