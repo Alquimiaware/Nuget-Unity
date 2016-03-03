@@ -37,7 +37,7 @@
         }
 
         [Test]
-        public void Execute_OnRuntimePackage_IsClassified()
+        public void Execute_OneRuntimePackage_IsClassified()
         {
             var runtimePkg = RuntimePkg();
             var sut = DefaultWithPackages(runtimePkg);

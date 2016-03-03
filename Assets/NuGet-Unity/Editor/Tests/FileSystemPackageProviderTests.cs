@@ -1,4 +1,4 @@
-﻿namespace Alquimiaware.NuGetUnity.Tests
+namespace Alquimiaware.NuGetUnity.Tests
 {
     using Microsoft.CSharp;
     using NUnit.Framework;
@@ -13,14 +13,6 @@
     [TestFixture, Category("Integration")]
     public class FileSystemPackageProviderTests
     {
-        [DidReloadScripts]
-        public static void OnRecompilation()
-        {
-            DeleteSourceDirectory();
-            SampleAssebly.Delete();
-            SampleAssebly.EnsureExists();
-        }
-
         [SetUp]
         public void Setup()
         {
