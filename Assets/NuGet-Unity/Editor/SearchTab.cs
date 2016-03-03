@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using System.Linq;
+    using System.Threading;
     using UnityEditor;
     using UnityEngine;
 
@@ -15,6 +16,8 @@
         private Vector2 ListScroll;
         private ListCommand listCommand;
         private InstallCommand installCommand;
+        private bool isSearching;
+        private bool wasCancelled;
 
         public SearchTab(
             ListCommand listCommand,
@@ -52,16 +55,41 @@
             {
                 this.listCommand.ShowAllVersions = this.showAllVersions;
                 this.listCommand.ShowPrerelease = this.showPrerelease;
-                this.searchResult =
-                    this.listCommand.Execute(this.searchTerms);
+                this.isSearching = true;
+                this.wasCancelled = false;
+                this.EnqueueBackgroundAction(() =>
+                {
+                    ////this.searchResult = this.listCommand.Execute(this.searchTerms);
+                    ////this.isSearching = false;
+                });
+
             }
 
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginVertical();
 
-            RenderResultList();
-
             EditorGUILayout.EndVertical();
+
+            if (this.isSearching)
+            {
+                this.wasCancelled = EditorUtility.DisplayCancelableProgressBar(
+                    "Searching", "Info", .99f);
+                if (wasCancelled)
+                {
+                    this.isSearching = false;
+                    EditorUtility.ClearProgressBar();
+                }
+            }
+            else
+            {
+                if (!wasCancelled)
+                    RenderResultList();
+            }
+        }
+
+        private void EnqueueBackgroundAction(Action action)
+        {
+            ThreadPool.QueueUserWorkItem(_ => action());
         }
 
         private void RenderResultList()

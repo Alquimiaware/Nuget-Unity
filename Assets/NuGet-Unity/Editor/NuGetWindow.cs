@@ -60,5 +60,12 @@
             return AssetDatabase.GUIDToAssetPath(
                 AssetDatabase.FindAssets(filter)[0]);
         }
+
+        private void OnInspectorUpdate()
+        {
+            // Needed for the progress bars to work
+            // If not included, progress bar will not update
+            Repaint();
+        }
     }
 }
