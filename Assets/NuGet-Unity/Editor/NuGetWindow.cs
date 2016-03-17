@@ -26,22 +26,23 @@
 
         private void OnGUI()
         {
-            EditorGUILayout.BeginVertical();
-            this.tab = GUILayout.Toolbar(
-                this.tab,
-                new string[] { "Search", "Installed" },
-                GUILayout.MaxWidth(400));
-
-            switch (this.tab)
+            using (GUILayoutEx.Vertical())
             {
-                case 0:
-                    this.searchTab.OnGUI();
-                    break;
-                default:
-                    break;
+                this.tab = GUILayout.Toolbar(
+                    this.tab,
+                    new string[] { "Search", "Installed" },
+                    GUILayout.MaxWidth(400));
+
+                switch (this.tab)
+                {
+                    case 0:
+                        this.searchTab.OnGUI();
+                        break;
+                    default:
+                        break;
+                }
             }
 
-            EditorGUILayout.EndVertical();
         }
 
         private static Sources GetSources()
