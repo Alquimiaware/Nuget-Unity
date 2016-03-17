@@ -41,8 +41,7 @@
                     this.searchTerms = GUILayoutEx.SearchField(
                         this.searchTerms,
                         GUILayout.MinWidth(100),
-                        GUILayout.MaxWidth(250),
-                        GUILayout.ExpandWidth(true));
+                        GUILayout.MaxWidth(250));
                 }
 
                 if (GUILayout.Button("Search", EditorStyles.toolbarButton)
