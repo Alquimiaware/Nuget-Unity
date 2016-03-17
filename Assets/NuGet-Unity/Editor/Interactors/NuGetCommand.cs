@@ -6,9 +6,13 @@
 
     public class NuGetCommand
     {
+        private string dataPath;
+
         public NuGetCommand(Sources sources)
         {
             this.Sources = sources;
+            // Can only be called on main thread
+            this.dataPath = Application.dataPath;
         }
 
         protected Sources Sources { get; private set; }
@@ -18,11 +22,11 @@
         /// </summary>
         /// <param name="args">nuget.exe args to be passed</param>
         /// <returns>The output or error stream.</returns>
-        protected static string CallNuGet(string args)
+        protected string CallNuGet(string args)
         {
             UnityEngine.Debug.Log(args);
             var nugetFullPath = Directory.GetFiles(
-                Application.dataPath,
+                this.dataPath,
                 "nuget.exe",
                 SearchOption.AllDirectories)[0];
 
