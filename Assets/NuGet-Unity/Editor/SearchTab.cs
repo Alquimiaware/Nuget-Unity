@@ -38,15 +38,11 @@
 
                 using (GUILayoutEx.ChangeCheck(Save))
                 {
-                    this.searchTerms = GUILayout.TextField(
-                                this.searchTerms,
-                                "ToolbarSeachTextField",
-                                GUILayout.MinWidth(100),
-                                GUILayout.MaxWidth(250),
-                                GUILayout.ExpandWidth(true));
-
-                    if (GUILayout.Button(GUIContent.none, string.IsNullOrEmpty(searchTerms) ? "ToolbarSeachCancelButtonEmpty" : "ToolbarSeachCancelButton"))
-                        searchTerms = string.Empty;
+                    this.searchTerms = GUILayoutEx.SearchField(
+                        this.searchTerms,
+                        GUILayout.MinWidth(100),
+                        GUILayout.MaxWidth(250),
+                        GUILayout.ExpandWidth(true));
                 }
 
                 if (GUILayout.Button("Search", EditorStyles.toolbarButton)

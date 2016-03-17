@@ -56,6 +56,24 @@
             });
         }
 
+        public static string SearchField(string searchTerms, params GUILayoutOption[] options)
+        {
+            searchTerms = GUILayout.TextField(
+                searchTerms,
+                "ToolbarSeachTextField",
+                options);
+
+            var clearButtonSkin =
+                string.IsNullOrEmpty(searchTerms) ?
+                "ToolbarSeachCancelButtonEmpty" :
+                "ToolbarSeachCancelButton";
+
+            if (GUILayout.Button(GUIContent.none, clearButtonSkin))
+                searchTerms = string.Empty;
+
+            return searchTerms;
+        }
+
         private class ActionOnDispose : IDisposable
         {
             private Action action;
