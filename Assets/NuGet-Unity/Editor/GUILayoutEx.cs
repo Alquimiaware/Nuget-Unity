@@ -46,6 +46,16 @@
             return new ActionOnDispose(() => EditorGUILayout.EndHorizontal());
         }
 
+        public static IDisposable ChangeCheck(Action onChanged)
+        {
+            EditorGUI.BeginChangeCheck();
+            return new ActionOnDispose(() =>
+            {
+                if (EditorGUI.EndChangeCheck())
+                    onChanged();
+            });
+        }
+
         private class ActionOnDispose : IDisposable
         {
             private Action action;
