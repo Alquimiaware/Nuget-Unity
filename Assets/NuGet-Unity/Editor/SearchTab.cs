@@ -59,32 +59,32 @@
                 this.wasCancelled = false;
                 this.EnqueueBackgroundAction(() =>
                 {
-                    ////this.searchResult = this.listCommand.Execute(this.searchTerms);
-                    ////this.isSearching = false;
+                    this.searchResult = this.listCommand.Execute(this.searchTerms);
+                    this.isSearching = false;
                 });
-
             }
 
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.BeginVertical();
 
+            EditorGUILayout.BeginVertical();
             EditorGUILayout.EndVertical();
 
             if (this.isSearching)
             {
                 this.wasCancelled = EditorUtility.DisplayCancelableProgressBar(
-                    "Searching", "Info", .99f);
+                    "Searching", "Searching for '" + searchTerms + "'", .995f);
                 if (wasCancelled)
                 {
                     this.isSearching = false;
                     EditorUtility.ClearProgressBar();
                 }
             }
-            else
+            else if (!wasCancelled)
             {
-                if (!wasCancelled)
-                    RenderResultList();
+                RenderResultList();
+                EditorUtility.ClearProgressBar();
             }
+
         }
 
         private void EnqueueBackgroundAction(Action action)

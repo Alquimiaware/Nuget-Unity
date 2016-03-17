@@ -65,6 +65,7 @@
         {
             // Needed for the progress bars to work
             // If not included, progress bar will not update
+            // There's at least one in SearchTab
             Repaint();
         }
     }
