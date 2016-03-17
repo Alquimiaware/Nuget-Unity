@@ -36,23 +36,21 @@
                 this.showPrerelease = GUILayout.Toggle(this.showPrerelease, "Show Prerelease");
                 this.showAllVersions = GUILayout.Toggle(this.showAllVersions, "Show All Versions");
 
-                EditorGUI.BeginChangeCheck();
+                using (GUILayoutEx.ChangeCheck(Save))
+                {
+                    this.searchTerms = GUILayout.TextField(
+                                this.searchTerms,
+                                "ToolbarSeachTextField",
+                                GUILayout.MinWidth(100),
+                                GUILayout.MaxWidth(250),
+                                GUILayout.ExpandWidth(true));
 
-                this.searchTerms = GUILayout.TextField(
-                    this.searchTerms,
-                    "ToolbarSeachTextField",
-                    GUILayout.MinWidth(100),
-                    GUILayout.MaxWidth(250),
-                    GUILayout.ExpandWidth(true));
-
-                if (GUILayout.Button(GUIContent.none, string.IsNullOrEmpty(searchTerms) ? "ToolbarSeachCancelButtonEmpty" : "ToolbarSeachCancelButton"))
-                    searchTerms = string.Empty;
-
-                if (EditorGUI.EndChangeCheck())
-                    Save();
+                    if (GUILayout.Button(GUIContent.none, string.IsNullOrEmpty(searchTerms) ? "ToolbarSeachCancelButtonEmpty" : "ToolbarSeachCancelButton"))
+                        searchTerms = string.Empty;
+                }
 
                 if (GUILayout.Button("Search", EditorStyles.toolbarButton)
-                  || Event.current.keyCode == KeyCode.Return)
+                    || KeyEvent.JustReleased(KeyCode.Return))
                 {
                     this.listCommand.ShowAllVersions = this.showAllVersions;
                     this.listCommand.ShowPrerelease = this.showPrerelease;
@@ -81,7 +79,6 @@
                 RenderResultList();
                 EditorUtility.ClearProgressBar();
             }
-
         }
 
         private void EnqueueBackgroundAction(Action action)
@@ -144,6 +141,7 @@
 
         private void Save()
         {
+
         }
     }
 }
