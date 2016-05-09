@@ -14,3 +14,4 @@ cloc .\ --by-file --csv --quiet --report-file=%complexityFilename%
 
 :: Combine Effort And Complexity
 python .\Tools\merge_comp_freqs.py %effortFilename% %complexityFilename% > EffortAndComplexityByFile.csv
+type EffortAndComplexityByFile.csv 
