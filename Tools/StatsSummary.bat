@@ -7,4 +7,3 @@ git log --pretty=format:"[%%h] %%an %%ad %%s" --date=short --numstat > %logName%
 :: Perform Summary Analysis
 call maat -c git -l %logName% -a summary > RepoSummary.txt
 type RepoSummary.txt
-pause
