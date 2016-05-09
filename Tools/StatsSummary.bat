@@ -1,4 +1,4 @@
-call %~dp0SetupTools.bat
+call "%~dp0SetupTools.bat"
 
 :: get git log
 set logName=RepoLog.log
