@@ -40,9 +40,11 @@
             var stdOut = process.StandardOutput.ReadToEnd();
             var stdError = process.StandardError.ReadToEnd();
 
-            return !string.IsNullOrEmpty(stdOut) ?
-                   stdOut :
-                   stdError;
+            string output = !string.IsNullOrEmpty(stdOut) ? stdOut : stdError;
+
+            UnityEngine.Debug.Log(output);
+
+            return output;
         }
     }
 }

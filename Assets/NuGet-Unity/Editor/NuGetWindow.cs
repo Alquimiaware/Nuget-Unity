@@ -19,8 +19,13 @@
             var sources = GetSources();
             var listCommand = new ListCommand(sources);
             var fsPackageProvider = new FileSystemPackageProvider();
+            var folderCommands = new FileSystemFolderCommands();
             var classifyPackages = new ClassifyPackages(fsPackageProvider);
-            var installCommand = new InstallCommand(sources, classifyPackages, new FileSystemFolderCommands());
+            var downloadPackage = new DownloadPackage(sources, folderCommands);
+            var installCommand = new InstallCommand(
+                downloadPackage,
+                classifyPackages,
+                new FileSystemFolderCommands());
             this.searchTab = new SearchTab(listCommand, installCommand);
         }
 

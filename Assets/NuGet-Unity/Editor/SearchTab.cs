@@ -128,9 +128,8 @@
                 Path.Combine(Application.dataPath, "Packages/");
             this.installCommand.AllowPrerelease = this.showPrerelease;
 
-            var output = this.installCommand.Execute(name, version);
+            this.installCommand.Execute(name, version);
 
-            Debug.Log(output);
             AssetDatabase.Refresh();
         }
 

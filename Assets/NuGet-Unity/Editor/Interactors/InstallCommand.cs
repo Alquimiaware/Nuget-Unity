@@ -3,19 +3,20 @@
     using System.IO;
     using UnityEngine;
 
-    public class InstallCommand : NuGetCommand
+    public class InstallCommand
     {
         private ClassifyPackages classifyCommand;
         private PackageMover pkgMover;
         private IFolderCommands folderCommands;
         private TargetDropper targetDropper;
+        private DownloadPackage downloadPackage;
 
         public InstallCommand(
-            Sources sources,
+            DownloadPackage downloadPackage,
             ClassifyPackages classifyCommand,
             IFolderCommands folderCommands)
-            : base(sources)
         {
+            this.downloadPackage = downloadPackage;
             this.classifyCommand = classifyCommand;
             this.folderCommands = folderCommands;
             this.pkgMover = new PackageMover(this.folderCommands);
@@ -25,40 +26,16 @@
         public string OutputDirectory { get; set; }
         public bool AllowPrerelease { get; set; }
 
-        public string Execute(string packageName, string version)
+        public void Execute(string packageName, string version)
         {
-            InstallCommandArgs installCmdArgs = GetCommandArgs(packageName, version);
-            string callResult = CallNuGet(installCmdArgs.ToString());
+            this.downloadPackage.Execute(packageName, version);
 
-            var classifiedPackages = this.classifyCommand.Execute(this.TempOutputDirectory);
+            var classifiedPackages = this.classifyCommand.Execute(this.downloadPackage.TempDestDirectory);
             this.targetDropper.DropUnusedTargets(classifiedPackages);
 
             // TODO: Validation of results and confirmation of usage of fallback goes here
 
             pkgMover.MovePackagesToOutputFolder(classifiedPackages, this.OutputDirectory);
-            folderCommands.Delete(this.TempOutputDirectory);
-
-            return callResult;
-        }
-
-        private InstallCommandArgs GetCommandArgs(string packageName, string version)
-        {
-            var installCmdArgs = new InstallCommandArgs(this.Sources);
-            installCmdArgs.PackageName = packageName;
-            installCmdArgs.Version = version;
-            installCmdArgs.OutputDirectory = "\"" + this.TempOutputDirectory + "\"";
-            installCmdArgs.AllowPrerelease = this.AllowPrerelease;
-            return installCmdArgs;
-        }
-
-        private string TempOutputDirectory
-        {
-            get
-            {
-                return Path.Combine(
-                    Application.dataPath,
-                    "../Library/Packages/Temp");
-            }
         }
     }
 }
