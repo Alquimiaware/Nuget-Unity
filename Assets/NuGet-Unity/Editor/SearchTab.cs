@@ -120,9 +120,11 @@
 
         private void Install(string packageName)
         {
+            var nameVer = NameVersion.Parse(packageName);
+
             var terms = packageName.Split(' ');
-            var name = terms[0];
-            var version = terms[1];
+            var name = nameVer.Name;
+            var version = nameVer.Version;
 
             this.installCommand.OutputDirectory =
                 Path.Combine(Application.dataPath, "Packages/");
