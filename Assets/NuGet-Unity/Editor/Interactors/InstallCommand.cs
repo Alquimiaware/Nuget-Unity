@@ -31,11 +31,11 @@
             this.downloadPackage.Execute(packageName, version);
 
             var classifiedPackages = this.classifyCommand.Execute(this.downloadPackage.TempDestDirectory);
-            this.targetDropper.DropUnusedTargets(classifiedPackages);
+            ////this.targetDropper.DropUnusedTargets(classifiedPackages);
 
-            // TODO: Validation of results and confirmation of usage of fallback goes here
+            ////// TODO: Validation of results and confirmation of usage of fallback goes here
 
-            pkgMover.MovePackagesToOutputFolder(classifiedPackages, this.OutputDirectory);
+            ////pkgMover.MovePackagesToOutputFolder(classifiedPackages, this.OutputDirectory);
         }
     }
 }

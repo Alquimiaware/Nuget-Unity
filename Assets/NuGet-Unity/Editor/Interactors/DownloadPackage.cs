@@ -17,7 +17,8 @@
 
         public string Execute(string packageName, string version)
         {
-            folderCommands.Delete(this.TempDestDirectory);
+            if (folderCommands.Exists(TempDestDirectory))
+                folderCommands.Delete(this.TempDestDirectory);
             InstallCommandArgs installCmdArgs = GetCommandArgs(packageName, version);
             string callResult = CallNuGet(installCmdArgs.ToString());
             return callResult;
