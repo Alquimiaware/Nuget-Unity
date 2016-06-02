@@ -25,6 +25,10 @@
             AssertName("Facebook 7.0.10.3400", "Facebook");
             AssertName("Bifrost.JSON 1.0.0.32-rc1", "Bifrost.JSON");
             AssertName("CS.System.Utilities 2.0.0-bear-rat", "CS.System.Utilities");
+
+            // Extra Spacing
+            AssertName("   Fooo.1.0", "Fooo");
+            AssertName("Bar    1.2.34-rc", "Bar");
         }
 
         [Test]
@@ -47,6 +51,10 @@
             AssertVersion("Facebook 7.0.10.3400", "7.0.10.3400");
             AssertVersion("Bifrost.JSON 1.0.0.32-rc1", "1.0.0.32-rc1");
             AssertVersion("CS.System.Utilities 2.0.0-bear-rat", "2.0.0-bear-rat");
+
+            // Extra Spacing
+            AssertVersion("   Fooo.1.0", "1.0");
+            AssertVersion("Bar    1.2.34-rc", "1.2.34-rc");
         }
 
         private void AssertName(string rawName, string expectedName)

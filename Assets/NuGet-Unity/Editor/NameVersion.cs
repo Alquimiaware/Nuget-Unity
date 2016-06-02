@@ -9,34 +9,20 @@
 
         public static NameVersion Parse(string versionedPackageName)
         {
-            string input = versionedPackageName;
+            string pattern = @"^\s*(?<name>([a-zA-Z]+\w*\.?)+)(\s+|\.)(?<version>(\d+\.?){2,4}(-[\w-]+)?)";
+            var match = Regex.Match(versionedPackageName, pattern);
 
-            string pattern = @"^(?<name>([a-zA-Z]+\w*\.?)+)(\s+|\.)(?<version>(\d+\.?){2,4}(-[\w-]+)?)";
+            if (!match.Success)
+                throw new System.ArgumentOutOfRangeException(
+                    "versionedPackageName",
+                    string.Concat("<", versionedPackageName, "> is not a versioned package name"));
 
-            var match = Regex.Match(input, pattern);
 
-            UnityEngine.Debug.Log("Input: " + input);
-
-            if (match.Success)
+            return new NameVersion()
             {
-                
-                GroupCollection groups = match.Groups;
-                ////UnityEngine.Debug.LogFormat("{0} groups captured in <{1}>", groups.Count, match.Value);
-                ////for (int i = 0; i < groups.Count; i++)
-                ////{
-                ////    UnityEngine.Debug.LogFormat("Group {0}: <{1}>", i, groups[i]);
-                ////}
-                UnityEngine.Debug.LogFormat("Name: <{0}>",groups["name"]);
-                UnityEngine.Debug.LogFormat("Version: <{0}>",groups["version"]);
-                return new NameVersion()
-                {
-                    Name = groups["name"].Value,
-                    Version = groups["version"].Value
-                };
-            }
-
-
-            throw new System.ArgumentOutOfRangeException();
+                Name = match.Groups["name"].Value,
+                Version = match.Groups["version"].Value
+            };
         }
     }
 }
