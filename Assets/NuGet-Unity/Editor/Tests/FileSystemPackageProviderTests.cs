@@ -228,7 +228,19 @@ namespace Alquimiaware.NuGetUnity.Tests
                 }
             }
 
-            public static void EnsureExists()
+            public static void Delete()
+            {
+                if (File.Exists(FullPath))
+                    File.Delete(FullPath);
+            }
+
+            public static void CopyTo(string destPath)
+            {
+                EnsureExists();
+                File.Copy(FullPath, destPath, true);
+            }
+
+            private static void EnsureExists()
             {
                 if (File.Exists(FullPath))
                     return;
@@ -244,17 +256,6 @@ namespace Alquimiaware.NuGetUnity.Tests
                 csc.CompileAssemblyFromSource(
                     compileParams,
                     SampleAssemblyCode);
-            }
-
-            public static void Delete()
-            {
-                if (File.Exists(FullPath))
-                    File.Delete(FullPath);
-            }
-
-            public static void CopyTo(string destPath)
-            {
-                File.Copy(FullPath, destPath, true);
             }
         }
 
