@@ -19,7 +19,7 @@
             AssertName("Http.Features.1.0.0-rc1-final", "Http.Features");
             AssertName("Mvc.4.0.20710.0", "Mvc");
 
-            ////// Space Sepparator
+            // Space Sepparator
             AssertName("AppNet.NET 1.8", "AppNet.NET");
             AssertName("Acr.Settings 5.1.0", "Acr.Settings");
             AssertName("Facebook 7.0.10.3400", "Facebook");

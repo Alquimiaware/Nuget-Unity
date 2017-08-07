@@ -1,6 +1,7 @@
 ﻿namespace Alquimiaware.NuGetUnity
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Threading;
@@ -92,7 +93,7 @@
 
                 var results = this.searchResult
                     .Split('\n')
-                    .Where(n => !string.IsNullOrEmpty(n))
+                    .Where(n => !string.IsNullOrEmpty(n) && n.Contains(this.searchTerms, CompareOptions.IgnoreCase))
                     .Select(n => n.Trim());
                 // Trim is important to remove invisible chars, that conflict with nuget
 
