@@ -42,8 +42,8 @@
                 if (target.Name != chosenTarget.Name)
                 {
                     // TODO: Properly abstract this
-                    ////Debug.LogFormat("Deleting Target '{0}' of package '{1}' @ '{2}'",
-                    ////    target.Name, package.Name, target.FolderLocation);
+                    Debug.LogFormat("Deleting Target '{0}' of package '{1}' @ '{2}'",
+                        target.Name, package.Name, target.FolderLocation);
                     this.folderCommands.Delete(target.FolderLocation);
                 }
             }
