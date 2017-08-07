@@ -11,6 +11,8 @@
 
         public NuGetCommandResult Execute(string searchTerms)
         {
+            // This this commmand requires verbosity to be normal for output parsing
+            this.OutputVerbosity = Verbosity.Normal;
             var args = new ListCommandArgs(this.Sources);
             args.SearchTerms = searchTerms;
             args.ShowAllVersions = this.ShowAllVersions;

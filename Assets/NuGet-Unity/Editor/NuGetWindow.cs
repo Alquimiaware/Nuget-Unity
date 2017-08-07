@@ -22,6 +22,7 @@
             var folderCommands = new FileSystemFolderCommands();
             var classifyPackages = new ClassifyPackages(fsPackageProvider);
             var downloadPackage = new DownloadPackage(sources, folderCommands);
+            downloadPackage.OutputVerbosity = NuGetCommand.Verbosity.Detailed;
             var installCommand = new InstallCommand(
                 downloadPackage,
                 classifyPackages,
