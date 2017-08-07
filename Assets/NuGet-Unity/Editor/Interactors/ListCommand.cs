@@ -9,7 +9,7 @@
         public bool ShowPrerelease { get; set; }
         public bool ShowAllVersions { get; set; }
 
-        public string Execute(string searchTerms)
+        public NuGetCommandResult Execute(string searchTerms)
         {
             var args = new ListCommandArgs(this.Sources);
             args.SearchTerms = searchTerms;

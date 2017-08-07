@@ -15,12 +15,12 @@
             this.folderCommands = folderCommands;
         }
 
-        public string Execute(string packageName, string version)
+        public NuGetCommandResult Execute(string packageName, string version)
         {
             if (folderCommands.Exists(TempDestDirectory))
                 folderCommands.Delete(this.TempDestDirectory);
             InstallCommandArgs installCmdArgs = GetCommandArgs(packageName, version);
-            string callResult = CallNuGet(installCmdArgs.ToString());
+            var callResult = CallNuGet(installCmdArgs.ToString());
             return callResult;
         }
 

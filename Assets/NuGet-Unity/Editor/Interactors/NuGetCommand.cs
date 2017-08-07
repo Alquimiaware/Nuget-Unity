@@ -21,8 +21,8 @@
         /// Calls nuget, blocks until completion and returns output.
         /// </summary>
         /// <param name="args">nuget.exe args to be passed</param>
-        /// <returns>The output or error stream.</returns>
-        protected string CallNuGet(string args)
+        /// <returns>The nuget command result.</returns>
+        protected NuGetCommandResult CallNuGet(string args)
         {
             UnityEngine.Debug.Log(args);
             var nugetFullPath = Directory.GetFiles(
@@ -40,11 +40,15 @@
             var stdOut = process.StandardOutput.ReadToEnd();
             var stdError = process.StandardError.ReadToEnd();
 
-            string output = !string.IsNullOrEmpty(stdOut) ? stdOut : stdError;
+            bool hasOutput = !string.IsNullOrEmpty(stdOut);
+            bool hasErrors = !string.IsNullOrEmpty(stdError);
 
-            UnityEngine.Debug.Log(output);
+            if (hasOutput)
+                UnityEngine.Debug.Log(stdOut);
+            if (hasErrors)
+                UnityEngine.Debug.LogError(stdError);
 
-            return output;
+            return new NuGetCommandResult(!hasErrors, stdOut, stdError);
         }
     }
 }

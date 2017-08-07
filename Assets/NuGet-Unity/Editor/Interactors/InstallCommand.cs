@@ -28,7 +28,10 @@
 
         public void Execute(string packageName, string version)
         {
-            this.downloadPackage.Execute(packageName, version);
+            var download = this.downloadPackage.Execute(packageName, version);
+
+            if (!download.Succeeded)
+                return;
 
             var classifiedPackages = this.classifyCommand.Execute(this.downloadPackage.TempDestDirectory);
             this.targetDropper.DropUnusedTargets(classifiedPackages);

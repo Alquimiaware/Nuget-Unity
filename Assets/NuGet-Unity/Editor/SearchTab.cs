@@ -54,7 +54,9 @@
                     this.wasCancelled = false;
                     this.EnqueueBackgroundAction(() =>
                     {
-                        this.searchResult = this.listCommand.Execute(this.searchTerms);
+                        var listCmd = this.listCommand.Execute(this.searchTerms);
+                        if (listCmd.Succeeded)
+                            this.searchResult = listCmd.StdOutput;
                         this.isSearching = false;
                     });
                 }
