@@ -11,8 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a123683fb5baa847874705c2a061e21, type: 3}
   m_Name: Sources Config
   m_EditorClassIdentifier: 
-  local:
-  - C:\Users\raudo_000\Documents\Projects\Unity Code Packages\Local Package Repository
+  local: []
   remote:
-  - https://www.myget.org/F/mareaindie/api/v2
   - https://www.nuget.org/api/v2/
