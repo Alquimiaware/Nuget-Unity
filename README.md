@@ -1,7 +1,52 @@
 # Nuget-Unity
 ![img](https://raw.githubusercontent.com/Alquimiaware/Nuget-Unity/master/Nuget-Unity32.png)
 
-Editor Extension for Unity to let users consume nuget repositorires and benefit from the usage of a complete versioned package provider that also downloads indirect dependencies of the installed code.
+Editor Extension for Unity to let users consume nuget repositories and benefit from the usage of a complete versioned package provider that also downloads indirect dependencies of the installed code.
+
+# Why using a package manager to share code?
+As you keep making one project after another you start observing that lots of the problems being solved are almost exacly the same. 
+At that point you may consider isolating those features as middleware so it can be reused later.
+You might find in your way that the features you are isolating depend on other features, that in turn depend on other subfeatures. 
+You can follow the rabbit hole until you hit a leaf, which is code that only depends on features from the framework, which is available to anyone running on a fixed target platform. 
+
+## Let's see it through an example.
+We want use a *Sphere* type that helps us working with spherical volumes.
+To define a *Sphere* behavior we need to provide:
+- Center(*Vector*) 
+- Radious(*float*).
+
+In the way Sphere is described, its definition won't be complete unless a Vector and float types that conforms to every feature Sphere is demanding is in scope.
+Components that are required to be in scope for a given component to work are called dependencies, from the point of view of the code that needs them.
+
+To define a *Vector* we need:
+- 3 coordinates (*float*)
+
+So in order to install *Sphere* component, we also need to install *Vector*. We don't need to install *float* because it's part of the platform framework. The way Unity works right now **there is not automatic way for a component to download it's dependencies** so they must be installed by hand or it must be distributed with copies of their dependencies. This is the reason a lot of people share code just by copy pasting all the common code ( assuming they can extract the middleware without bringing the whole system, which is another topic altogether) or by unity packages
+
+## Why not sharing all common code together?
+There are lot's of reasons, including but not limited to:
+- You will be always compiling common code that will barely change and probably lots of code that you are not using on the specific project, so your build times will be slower
+- When you fix an issue on common code, yo have manually to propagate the changes to all the copies.
+- There is not ordered stable releases so you probably will have lots of almost equivalent(but not quite) versions that will be hell to mantain.
+- If common contains a type already present in the project, there will be conflicts
+- Anything that depends on common will need to bring all that code, or join the pack
+
+## How to share in a better way?
+Shared code can provide the value of reusability without the overheads described in previous section if it follows  
+- [Continously granular](https://mollyrocket.com/casey/stream_0020.html)
+- Components as compact as possible, (no unnecesary content and well defined scope).
+- It is seamless to install and uptade
+  - Organized in versioned packages
+  - Repositories of packages for distribution
+  - Integrated into the editor
+  - Automatic dependency installing
+
+# How does Nuget-Unity help?
+Based on top of the already established NuGet package manager, we already get versioned packages, repositories and automatic dependency installing. What Unity-Nuget helps with is making it seamless to use with the editor while also solving the issues preventing people from using it by command line, which are:
+- Unity uses outdated mono version
+- Its compatibility with .net35 component is not guaranteed 
+- It has different framework target profiles depending on whether the code is runtime or editor and also depending on whether full or partial framework is included.
+- Nuget command line downloads all target framework versions so the apropiate one must be selected. 
 
 # How to use
 - Open Nuget window from Window -> Nuget
