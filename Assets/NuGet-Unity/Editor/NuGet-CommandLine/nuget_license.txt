@@ -1,4 +1,4 @@
-nuget.exe taken from https://dist.nuget.org/win-x86-commandline/v3.2.0/nuget.exe
+nuget.exe taken from https://dist.nuget.org/ v4.1.0.2450
 (binary without any modification)
 nuget.exe is subject to the following terms and conditions:
 
