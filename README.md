@@ -21,7 +21,7 @@ Components that are required to be in scope for a given component to work are ca
 To define a *Vector* we need:
 - 3 coordinates (*float*)
 
-So in order to install *Sphere* component, we also need to install *Vector*. We don't need to install *float* because it's part of the platform framework. The way Unity works right now **there is not automatic way for a component to download it's dependencies** so they must be installed by hand or it must be distributed with copies of their dependencies. This one reason a lot of people share code just by copy pasting all the common code ( assuming they can extract the middleware without bringing the whole system, which is another topic altogether) or by unity packages.
+So in order to install *Sphere* component, we also need to install *Vector*. We don't need to install *float* because it's part of the platform framework. The way Unity works right now **there is not automatic way for a component to download it's dependencies** so they must be installed by hand or it must be distributed with copies of their dependencies. This is a reason a lot of people share code just by copy pasting all the common code ( assuming they can extract the middleware without bringing the whole system, which is another topic altogether) or by unity packages.
 
 ## Why not sharing all common code together?
 There are lots of reasons, including but not limited to:
@@ -53,7 +53,10 @@ Based on top of the already established [NuGet](https://www.nuget.org/) package 
 
 # Notes
 Right now the libraries downloaded are targetting .net35. As you might know there is no guarantee that a library built against that target will completely work with unity. 
+
 A complete solution would be to have a package repository with libraries built against unity specific build targets. I'll share with you soon a little more about the specifics of how this could be done.
+
+The project right now is focusing on consuming and upgrading packages. For package publishing I'll write some articles with options for managing your package repositories and how to properly create the packages.
 
 Thanks a lot all of you who try this, I also would love to get feedback in the form of well described issues ^^
 
