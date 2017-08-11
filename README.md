@@ -61,7 +61,7 @@ The project right now is focusing on consuming and upgrading packages. For packa
 Thanks a lot all of you who try this, I also would love to get feedback in the form of well described issues ^^
 
 # Download 
-[Alpha-Preview](https://github.com/Alquimiaware/Nuget-Unity/raw/master/NuGetUnity.unitypackage)
+[Alpha-Preview](https://drive.google.com/uc?export=download&id=0Byy0QZ45mRKhemdMblE2WWlTWjA)
 
 ### Credits
 <div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
