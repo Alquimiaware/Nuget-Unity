@@ -37,7 +37,11 @@
 
         private List<string> GetReferenceNames(DirectoryInfo di)
         {
-            var dllPath = di.GetFiles("*.dll")[0].FullName;
+            var dllFiles = di.GetFiles("*.dll");
+            if (dllFiles.Length == 0)
+                return new List<string>();
+
+            var dllPath = dllFiles[0].FullName;
 
             // We have to load it this way so the file is not locked after loading
             byte[] assemblyBytes = File.ReadAllBytes(dllPath);
