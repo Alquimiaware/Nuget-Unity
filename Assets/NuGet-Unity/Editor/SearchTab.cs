@@ -45,8 +45,10 @@
                         GUILayout.MaxWidth(250));
                 }
 
+                bool searchEnabled = !string.IsNullOrEmpty(this.searchTerms);
+                GUI.enabled = searchEnabled;
                 if (GUILayout.Button("Search", EditorStyles.toolbarButton)
-                    || KeyEvent.JustReleased(KeyCode.Return))
+                    || (searchEnabled && KeyEvent.JustReleased(KeyCode.Return)))
                 {
                     this.listCommand.ShowAllVersions = this.showAllVersions;
                     this.listCommand.ShowPrerelease = this.showPrerelease;
@@ -60,6 +62,7 @@
                         this.isSearching = false;
                     });
                 }
+                GUI.enabled = true;
             }
 
             if (this.isSearching)
