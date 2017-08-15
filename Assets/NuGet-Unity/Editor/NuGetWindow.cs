@@ -7,6 +7,7 @@
     {
         private int tab;
         private SearchTab searchTab;
+        private InstalledTab installedTab;
 
         [MenuItem("Window/NuGet")]
         private static void Init()
@@ -27,7 +28,9 @@
                 downloadPackage,
                 classifyPackages,
                 new FileSystemFolderCommands());
+            var restoreCommand = new RestoreCommand(sources);
             this.searchTab = new SearchTab(listCommand, installCommand);
+            this.installedTab = new InstalledTab(restoreCommand);
         }
 
         private void OnGUI()
@@ -44,7 +47,10 @@
                     case 0:
                         this.searchTab.OnGUI();
                         break;
-                    default:
+                    case 1:
+                        this.installedTab.OnGUI();
+                        break;
+                    default:                            
                         break;
                 }
             }
