@@ -132,8 +132,6 @@
             var name = nameVer.Name;
             var version = nameVer.Version;
 
-            this.installCommand.OutputDirectory =
-                Path.Combine(Application.dataPath, "Packages/");
             this.installCommand.AllowPrerelease = this.showPrerelease;
 
             this.installCommand.Execute(name, version);

@@ -8,10 +8,20 @@
 
     public class RestoreCommand : NuGetCommand
     {
-        public RestoreCommand(Sources sources)
+        private ClassifyPackages classifyCommand;
+        private PackageMover packageMover;
+
+        public RestoreCommand(
+            ClassifyPackages classifyCommand ,
+            IFolderCommands folderCommands,
+            Sources sources)
             : base(sources)
         {
+            this.classifyCommand = classifyCommand;
+            this.packageMover = new PackageMover(folderCommands);
         }
+
+        public string OutputDirectory { get; internal set; }
 
         public void Execute(PackageDependencies dependencies)
         {
@@ -30,7 +40,10 @@
             CallNuGet(restoreArgs.ToString());
 
             // Classify all of them
+            var classifiedPackages = classifyCommand.Execute(tempDest);
+
             // Copy to packages folder ( override if forced )
+            packageMover.MovePackagesToOutputFolder(classifiedPackages, OutputDirectory);
         }
 
         private void GenerateConfigFile(string configFullPath, PackageDependencies dependencies)

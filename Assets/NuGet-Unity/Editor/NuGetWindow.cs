@@ -1,5 +1,6 @@
 ﻿namespace Alquimiaware.NuGetUnity
 {
+    using System.IO;
     using UnityEditor;
     using UnityEngine;
 
@@ -17,6 +18,7 @@
 
         private void OnEnable()
         {
+            string packageOutputDir = Path.Combine(Application.dataPath, "Packages/");
             var sources = GetSources();
             var listCommand = new ListCommand(sources);
             var fsPackageProvider = new FileSystemPackageProvider();
@@ -28,7 +30,10 @@
                 downloadPackage,
                 classifyPackages,
                 new FileSystemFolderCommands());
-            var restoreCommand = new RestoreCommand(sources);
+            var restoreCommand = new RestoreCommand(classifyPackages, folderCommands, sources);
+            installCommand.OutputDirectory = packageOutputDir;
+            restoreCommand.OutputDirectory = packageOutputDir;
+
             this.searchTab = new SearchTab(listCommand, installCommand);
             this.installedTab = new InstalledTab(restoreCommand);
         }
